@@ -6,24 +6,23 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Models\Testprovide;
 use App\Models\Ambulance;
-use App\Models\Medicineprovide;
+use App\Models\Appointment;
 use App\Models\Member;
 use App\Models\Stock;
 use App\Models\User;
 use Illuminate\Support\Facades\validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class AmbulancepanelController extends Controller
 {
      public function ambulance(Request $request){
 
-        $member=Member::where('member_status',1)->get();
+        $doctor=User::where('userType','Doctor')->where('status',1)->get();
         $driver=User::where('userType','Driver')->where('status',1)->get();
         if ($request->ajax()) {
-            $data = Ambulance::leftjoin('members','members.id','=','ambulances.member_id')
-              ->leftjoin('users','users.id','=','ambulances.driver_id')
-               ->select('members.member_name','members.phone','members.registration','users.name','users.phone as driver_phone','ambulances.*')->latest()->get();
+            $data = Ambulance::with('member')->with('driver')->with('doctor')->with('appointment')->with('careof')->latest()->get();
                return Datatables::of($data)
                ->addIndexColumn()
                ->addColumn('status', function($row){
@@ -36,7 +35,7 @@ class AmbulancepanelController extends Controller
                                $statusBtn = '<button class="btn btn-danger btn-sm">Canceled</button>';
                                break;
                            default:
-                               $statusBtn = '<button class="btn btn-secondary btn-sm">Pending</button>';
+                               $statusBtn = '<button class="btn btn-secondary btn-sm">On_Going</button>';
                                break;
                     }
 
@@ -50,13 +49,16 @@ class AmbulancepanelController extends Controller
                     $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a>';
                     return $btn;
                   })
-                   ->addColumn('ref_teacher', function($row){
-                      return member_name($row->ref_teacher)?member_name($row->ref_teacher)['member_name']:"";
-                  })
+                  ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)
+                        ->timezone('Asia/Dhaka')
+                        ->format('Y-m-d H:i:s'); // Adjust format as needed
+                   })
+              
                  ->rawColumns(['ref_teacher','status','edit','delete'])
                  ->make(true);
            }
-          return view('ambulance.ambulance',['member'=>$member,'driver'=>$driver]);  
+          return view('ambulance.ambulance',['doctor'=>$doctor,'driver'=>$driver]);  
        }
 
 
@@ -65,7 +67,7 @@ class AmbulancepanelController extends Controller
      
          $user=Auth::user();
          $validator=\Validator::make($request->all(),[
-             'member_id'=>'required',
+             'appointment_id'=>'required',
              'driver_id'=>'required',
              'to_address'=>'required',
           ]);
@@ -81,12 +83,15 @@ class AmbulancepanelController extends Controller
                $month= date("m");
                $day= date("d");
 
+             $appointment=Appointment::where('id',$request->appointment_id)->first();
+
+             if($appointment) {
               $model= new Ambulance;
+              $model->appointment_id = $appointment->id;
+              $model->member_id = $appointment->member_id;
               $model->driver_id = $request->input('driver_id');
-              $model->member_id = $request->input('member_id');
+              $model->doctor_id = $request->input('doctor_id');
               $model->to_address = $request->input('to_address');
-              $model->ref_teacher = $request->input('ref_teacher');
-              $model->disease = $request->input('disease');
               $model->created_by=$user->id;
               $model->date = $date;
               $model->year = $year;
@@ -98,6 +103,13 @@ class AmbulancepanelController extends Controller
                 'status'=>200,  
                 'message'=>'Data Added Successfully',
               ]);
+
+            }else{
+                 return response()->json([
+                   'status'=>401,  
+                   'message'=>'Invalid Appointment ID',
+                 ]);
+            }
 
         }   
     }
@@ -129,15 +141,19 @@ class AmbulancepanelController extends Controller
             ]);
         } else {
             $model = Ambulance::find($request->input('edit_id'));
-            if ($model) {
+            if($model) {
+                $datetime=date('Y-m-d H:i:s');
                 $date= date("Y-m-d");
                 $year= date("Y");
                 $month= date("m");
                 $day= date("d");
                 $model->driver_id = $request->input('driver_id');
+                $model->doctor_id = $request->input('doctor_id');
                 $model->to_address = $request->input('to_address');
                 $model->disease = $request->input('disease');
-                $model->distance = $request->input('distance');
+                if($request->input('status') == 1){
+                    $model->completed_at = $datetime;
+                }
                 $model->status = $request->input('status');
                 $model->created_by=$user->id;
                 $model->date = $date;

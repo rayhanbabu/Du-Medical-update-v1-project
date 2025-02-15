@@ -50,6 +50,7 @@
                          <td> Serial </td>
                          <td> Test Name </td>
                          <td> Diagnostic Name </td>
+                         <td> By Default Value </td>
                          <td> Reference Range</td>
                          <td> Diagnostic Character</td>
                          <td> Diagnostic Status</td>
@@ -88,6 +89,7 @@
             {data: 'DT_RowIndex', name: 'DT_RowIndex'},
             {data: 'test_name', name: 'test_name'},
             {data: 'diagnostic_name', name: 'diagnostic_name'},
+            {data: 'default_value', name: 'default_value'},
             {data: 'reference_range', name: 'reference_range'},
             {data: 'character_name', name: 'character_name'},
             {data: 'status', name: 'status'},

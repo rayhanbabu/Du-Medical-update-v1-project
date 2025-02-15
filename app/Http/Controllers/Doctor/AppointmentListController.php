@@ -243,7 +243,9 @@ class AppointmentListController extends Controller
            if($nonNullCount>0){
                 foreach ($intestid as $key => $val) {
                    if (isset($test_id[$key]) && $test_id[$key]) {
+                      $test=Test::where('id',$test_id[$key])->first();
                        $intestattr = [
+                           'test_id' => $test_id[$key],
                            'test_id' => $test_id[$key],
                            'appointment_id' => $appointment_id,
                            'member_category' => $member_category,

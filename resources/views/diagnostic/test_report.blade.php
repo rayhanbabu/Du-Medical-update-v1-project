@@ -37,38 +37,45 @@
      <div class="card-body">
       
       <div class="row g-1">
-         <div class="col-md-6 mt-2 p-1">
+         <div class="col-md-4 mt-2 p-1">
            <div class="shadow p-2">
                  <b> Patient Information </b>
               <hr>
               <div class="row">
-                    <div class="col-md-8">
-                         Name: <b>{{$testprovide->member_name}} </b><br>
-                         Appoinment Id: <b>{{$testprovide->appointment_id}} </b><br>
-                         Test Id: <b>{{$testprovide->test_id}} </b><br>
-                         Reg/ Employee Id: <b> {{$testprovide->registration}} </b><br>
-                         Referred By: <b> {{$testprovide->name}} </b><br>
-                         
+              <div class="col-md-8">
+                        @if($testprovide->careof)
+                            Member Name : <b> {{$testprovide->member->member_name}} </b> <br>
+                            Careof & Patient : <b> {{$testprovide->careof->family_member_name}} </b> <br>
+                        @else
+                          Patient Name : <b> {{$testprovide->member->member_name}} </b> <br>
+                        @endif
+                        Appointment Id: <b>  {{$testprovide->id}}</b> <br>
+                        Appintment Date: <b> {{$testprovide->date}} </b><br>
                      </div>
 
-                     <div class="col-md-4">
-                          Age:<b> {{$testprovide->age}} </b><br>
-                          Gender:<b> {{$testprovide->gender}} </b><br>
+                    
 
-                  @if(admin_info()->userType=="Test")
+               
+                   <div class="form-group   my-2">
+                      <label class=""><b>Tested Status <span style="color:red;"> * </span> </b></label>
+                       <select class="form-select form-select-sm" name="tested_status"  aria-label="Default select example">
+                          <option value="0" {{ $testprovide->tested_status == '0' ? 'selected' : '' }}>  Pending </option>
+                          <option value="1" {{ $testprovide->tested_status == '1' ? 'selected' : '' }}> Completed </option> 
+                       </select>
+                   </div> 
 
-                  @else
-                  <div class="form-group   my-2">
-                      <label class=""><b>Test Status <span style="color:red;"> * </span> </b></label>
-                      <select class="form-select form-select-sm" name="test_status"  aria-label="Default select example">
-                          <option value="1" {{ $testprovide->test_status == '1' ? 'selected' : '' }}> Completed </option>
-                          <option value="5" {{ $testprovide->test_status == '5' ? 'selected' : '' }}> Verify Pending </option>
-                          <option value="0" {{ $testprovide->test_status == '0' ? 'selected' : '' }}> Staff Pending </option>
-                      </select>
-                  </div> 
-                @endif
 
-                     </div>
+                   <div class="form-group   my-2">
+                      <label class=""><b>Checked Status <span style="color:red;"> * </span> </b></label>
+                       <select class="form-select form-select-sm" name="checked_status"  aria-label="Default select example">
+                          <option value="0" {{ $testprovide->checked_status == '0' ? 'selected' : '' }}>  Pending </option>
+                          <option value="1" {{ $testprovide->checked_status == '1' ? 'selected' : '' }}> Verified </option>
+                       
+                       </select>
+                   </div> 
+             
+
+                    
               </div>
 
               <br>
@@ -77,31 +84,46 @@
 
 
      <!-- Nursing Start -->
-    <div class="col-md-6 mt-2 p-1">
+    <div class="col-md-8 mt-2 p-1">
         <div class="shadow p-2">
-             Test Name: <b> {{$testprovide->test_name}}</b> 
-            <hr>
+           
             <input type="hidden" name="appointment_id" value="{{$testprovide->appointment_id}}" class="form-control"> 
-            <input type="hidden" name="test_id" value="{{$testprovide->test_id}}" class="form-control"> 
             <input type="hidden" name="testprovide_id" value="{{$testprovide->id}}" class="form-control"> 
+            <input type="hidden" name="testcategory_id" value="{{$testprovide->testcategory_id}}" class="form-control"> 
             
     <div class="row">
      <div class="col-md-12">
       <table class="table">
+
+              <th>  Test Name </th>
+              <th>  Result </th>
+              <th>  Reference Range </th>
+              <th>  Character </th>
     <tbody>
+
 
           @foreach($diagnostic_list as $row)
            <tr>
-             @if($table=="diagnostics")
-               <input type="hidden" name="diagnostic_id[]" value="{{$row->id}}" class="form-control">
-             @else 
-             <input type="hidden" name="diagnostic_id[]" value="{{$row->diagnostic_id}}" class="form-control">
-             @endif   
-               <td> {{$row->diagnostic_name}} </td>
-               <input type="hidden" name="character_id[]" value="{{$row->character_id}}" class="form-control">  
-               <td> <input type="test" name="result[]" value="{{$row->result}}" class="form-control" required> </td>
-               <td> <input type="test" name="reference_range[]" value="{{$row->reference_range}}" class="form-control" readonly> </td>
-             
+              @if($table=="diagnostics")
+                 <input type="hidden" name="diagnostic_id[]" value="{{$row->id}}" class="form-control">
+                 <td> {{$row->diagnostic_name}} </td>
+              @else 
+                <input type="hidden" name="diagnostic_id[]" value="{{$row->diagnostic_id}}" class="form-control">
+                 <td> {{$row->diagnostic->diagnostic_name}} </td>
+              @endif   
+
+
+            
+            
+                @if($table=="diagnostics") 
+                   <td> <input type="text" name="result[]" value="{{$row->default_value}}" class="form-control" required> </td>
+                @else
+                   <td> <input type="text" name="result[]" value="{{$row->result}}" class="form-control" required> </td>
+                @endif
+                <input type="hidden" name="test_id[]" value="{{$row->test_id}}" class="form-control"> 
+                <input type="hidden" name="character_id[]" value="{{ $row->character?$row->character->id:null }}" class="form-control">  
+                <td> <input type="text" name="reference_range[]" value="{{$row->reference_range}}" class="form-control" readonly> </td>
+                <td> {{ $row->character?$row->character->character_name:null }}  </td>
             </tr>
           @endforeach
           
@@ -118,7 +140,7 @@
        </div>
 
        <div class="mt-4">
-             <button type="submit" id="edit_appointment_btn" class="btn btn-success">Update </button>
+             <button type="submit" id="edit_appointment_btn" class="btn btn-success"> Save & Update </button>
        </div>
 
     </div>

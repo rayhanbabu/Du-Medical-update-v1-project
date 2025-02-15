@@ -173,10 +173,6 @@
                   Diagnostic Panel 
             </a>
 
-          <a class="nav-link @yield('appointment_test')" href="{{url('diagnostic/appointment_test')}}">
-             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                 Test Report
-          </a>
 
          @endif
 

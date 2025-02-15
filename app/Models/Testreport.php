@@ -18,5 +18,17 @@ class Testreport extends Model
          'test_id',
          'diagnostic_id',
          'character_id',
+         'testcategory_id',
     ];
+
+
+    public function character(){
+        return $this->belongsTo(Character::class,'character_id');   
+    }
+
+
+    public function diagnostic(){
+        return $this->belongsTo(Diagnostic::class,'diagnostic_id');   
+    }
+
 }

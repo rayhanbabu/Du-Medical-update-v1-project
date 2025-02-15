@@ -6,7 +6,7 @@
 <div class="card mt-2 mb-2 shadow-sm">
   <div class="card-header">
   <div class="row ">
-               <div class="col-8"> <h5 class="mt-0"> Diagnostic Report  </h5></div>
+               <div class="col-8"> <h5 class="mt-0"> Diagnostic Report Setup </h5></div>
                      <div class="col-2">
                          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                              
@@ -40,15 +40,16 @@
                 <table class="table  table-bordered data-table">
                    <thead>
                      <tr>
-                         <td> Appointment ID  </td>
-                         <td> Test Id  </td>
+                         <td> App ID  </td>
                          <td> Date  </td>
                          <td> Name  </td>
                          <td> Careof </td>
-                         <td> Registration  </td>
-                         <td> Test Name  </td>
-                         <td> Status  </td>
+                         <td> Phone  </td>
+                         <td> Test Category  </td>
+                         <td> Tested Status  </td>
+                         <td> Checked Status  </td>
                          <td> Edit  </td>
+                         <td> Print  </td>
                          <td> Tested By  </td>
                          <td> Checked By  </td>
                       </tr>
@@ -81,19 +82,19 @@
            }
        },
        order: [
-            [7, 'desc'],   
-            [0, 'desc']   
+            [1, 'desc']   
         ],
        columns: [
             {data: 'appointment_id', name: 'appointment_id'},
-            {data: 'test_id', name: 'test_id'},
             {data: 'date', name: 'date'},
-            {data: 'member_name', name: 'member_name'},
-            {data: 'family_member_name', name: 'family_member_name'},
-            {data: 'registration', name: 'registration'},
-            {data: 'test_name', name: 'test_name'},
-            {data: 'status', name: 'status'},
+            {data: 'member.member_name', name: 'member.member_name'},
+            {data: 'member.member_name', name: 'member.member_name'},
+            {data: 'member.phone', name: 'member.phone'},
+            {data: 'testcategory.testcategory_name', name: 'testcategory.testcategory_name'},
+            {data: 'tested_status', name: 'tested_status'},
+            {data: 'checked_status', name: 'checked_status'},
             {data: 'edit', name: 'edit', orderable: false, searchable: false},
+            {data: 'link', name: 'link', orderable: false, searchable: false},
             {data: 'tested', name: 'tested'},
             {data: 'checked', name: 'checked'},
           

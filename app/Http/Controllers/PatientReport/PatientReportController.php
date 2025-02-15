@@ -148,22 +148,25 @@ class PatientReportController extends Controller
                 //try {
 
                     $appointment_id=$request->appointment_id;
+                    $testcategory_id=$request->testcategory_id;
   
-                    $testprovide = Testprovide::leftjoin('tests','tests.id','=','testprovides.test_id')
-                    ->leftjoin('testcategories','testcategories.id','=','tests.testcategory_id')
-                    ->where('testprovides.appointment_id',$appointment_id)
-                    ->select('tests.testcategory_id',DB::raw("Max(testprovides.appointment_id) as appointment_id")
-                    ,DB::raw("Max(testcategories.testcategory_name) as testcategory_name")
-                    ,DB::raw("Max(testprovides.tested_by) as tested_by")
-                    ,DB::raw("Max(testprovides.checked_by) as checked_by"))->groupBy('tests.testcategory_id')->get();
+                    // $testprovide = Testprovide::leftjoin('tests','tests.id','=','testprovides.test_id')
+                    // ->leftjoin('testcategories','testcategories.id','=','tests.testcategory_id')
+                    // ->where('testprovides.appointment_id',$appointment_id)
+                    // ->select('tests.testcategory_id',DB::raw("Max(testprovides.appointment_id) as appointment_id")
+                    // ,DB::raw("Max(testcategories.testcategory_name) as testcategory_name")
+                    // ,DB::raw("Max(testprovides.tested_by) as tested_by")
+                    // ,DB::raw("Max(testprovides.checked_by) as checked_by"))->groupBy('tests.testcategory_id')->get();
    
-                    $data = Appointment::leftJoin('members','members.id','=','appointments.member_id')
-                    ->leftJoin('users','users.id','=','appointments.user_id')
-                    ->leftJoin('chambers','chambers.id','=','appointments.chamber_id')
-                    ->leftJoin('families','families.id','=','appointments.careof_id')
-                    ->where('appointments.id',$appointment_id)
-                    ->select('families.family_member_name','families.relation_type','chambers.chamber_name','users.name','users.designation as user_designation'
-                    ,'members.member_name','members.registration','appointments.*')->first();
+               
+
+             $testprovide = Testprovide::with('member')->with('testcategory')->with('user')->with('checked')
+             ->with('tested')->with('appointment')->with('careof')
+              ->where('appointment_id',$appointment_id)->where('testcategory_id',$testcategory_id)->get();
+
+                $data=$testprovide->first();
+              
+               
   
                     $file=$data->member_name.'-'.$appointment_id.'-test report.pdf';
                     $pdf = PDF::setPaper('a4','portrait')->loadView('patientreportprint.test', 

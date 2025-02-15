@@ -85,6 +85,11 @@
                 </select>
            </div> 
 
+           <div class="form-group col-sm-3 my-2">
+               <label class=""><b> By Default Value </b></label>
+               <input type="text" name="default_value" class="form-control form-control-sm" value="{{$default_value}}" >
+          </div> 
+
 
        </div>
            <br>

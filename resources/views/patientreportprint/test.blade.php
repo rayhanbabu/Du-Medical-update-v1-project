@@ -200,11 +200,7 @@
 </head>
 <body>
 
-@php
-    $totalItems = count($testprovide); // Assuming $items is the array/data you are looping through
-@endphp
 
-@foreach($testprovide as $index => $item)
 
   <div class="container">
      <div class="rayhan_header">
@@ -221,47 +217,47 @@
        </thead>
     <tbody>
 
-      @if(empty($data->family_member_name))
+    @if(!$data->careof)
           <tr>
              <td style="width: 40%;"> Appointment Id: <b>  {{ $data->id }} </b> </td>
              <td style="width: 20%;"> Date :<b> {{$data->date}} </b> </td>
-             <td style="width: 40%;">  {{$data->name}} </td>
+             <td style="width: 40%;"> OPD </td>
           </tr>
 
            <tr>
-             <td style="width:40%;"> Patient Name : <b> {{ $data->member_name }} </b> </td>
-             <td style="width:20%;"> Age : <b> {{ $data->age }} </b> </td>
-             <td style="width:40%;"> {{ $data->user_designation }} </td>
+             <td style="width:40%;"> Patient Name : <b> {{ $data->member->member_name }} </b> </td>
+             <td style="width:20%;"> Age : <b> {{ $data->member->age }} </b> </td>
+             <td style="width:40%;">  </td>
           </tr>
 
            <tr>
-             <td> Registration/Employee Id : <b> {{ $data->registration }} </b> </td>
-             <td> Gender: <b> {{ $data->gender }} </b></td>
+             <td> Registration/Employee Id : <b>{{ $data->member->registration}} </b> </td>
+             <td> Gender: <b> {{ $data->member->gender}} </b></td>
              <td>   </td>
           </tr>
         @else
 
-        <tr>
-             <td style="width: 40%;"> Appointment Id: <b>  {{ $data->id }} </b> </td>
-             <td style="width: 20%;"> Date :<b> {{$data->date}} </b> </td>
-             <td style="width: 40%;">  {{$data->name}} </td>
+          <tr>
+               <td style="width: 40%;">  Appointment Id: <b>  {{ $data->id }} </b> </td>
+               <td style="width: 20%;">  Date :<b> {{$data->date}} </b> </td>
+               <td style="width: 40%;"> OPD </td>
           </tr>
 
            <tr>
-             <td style="width: 40%;"> Employee Name: <b> {{ $data->member_name }} </b> </td>
-             <td style="width: 20%;"> Age : <b> {{ $data->age }} </b> </td>
-             <td style="width: 40%;"> {{ $data->user_designation }} </td>
+             <td style="width: 40%;"> Member Name: <b>{{$data->member->member_name}}  </b> </td>
+             <td style="width: 20%;"> Age : <b> {{ $data->appointment->age}}</b> </td>
+             <td style="width: 40%;">  </td>
           </tr>
 
            <tr>
-             <td> Employee Id : <b> {{ $data->registration }} </b> </td>
-             <td> Gender: <b> {{ $data->gender }} </b></td>
+             <td>Registration/ Employee Id : <b> {{ $data->member->registration}} </b> </td>
+             <td> Gender: <b> {{ $data->appointment->gender}}</b></td>
              <td>   </td>
           </tr>
 
           <tr>
-             <td> Careof & Patient Name : <b> {{ $data->family_member_name }} </b> </td>
-             <td> Relation Type : <b> {{ $data->relation_type }}  </b>  </td>
+             <td> Careof & Patient Name : <b>  {{$data->careof->family_member_name}}  </b> </td>
+             <td>  <b>  </b>  </td>
              <td>   </td>
           </tr>
 
@@ -274,11 +270,9 @@
    
     <div class="content">
         <div class="column rx">
-             <h3 style="text-align:center"> {{$item->testcategory_name}}  REPORT </h3>
+             <h3 style="text-align:center"> {{$data->testcategory->testcategory_name}}  REPORT </h3>
            <table>   
-             @php
-                $counter = 1;
-             @endphp
+           
 
              <tr>
                  <td style="width: 50%;"> <b>  INVESTIGATION  </b> </td>
@@ -286,7 +280,7 @@
                  <td style="width: 35%;"> <b>  REFERENCE VALUE  </b> </td>
              </tr>
 
-            @foreach(test_report($item->appointment_id,$item->testcategory_id) as $row)
+            @foreach(test_report($data->appointment_id,$data->testcategory_id) as $row)
                       
                       @foreach(character_report($row->id) as $x)
                         @if(empty($x->character_name))
@@ -320,28 +314,22 @@
 
     <div class="signature_right">
         <p> Tested By</p>
-        <p><strong>  {{ user_name($item->tested_by)?user_name($item->tested_by)['name']:"" }}</strong></p>
-        <p>{{ user_name($item->tested_by)?user_name($item->tested_by)['designation']:"" }} </p>
+        <p><strong> {{$data->tested?$data->tested->designation:""}} </strong></p>
+        <p> {{$data->tested?$data->tested->name:""}} </p>
     </div>
 
 
     <div class="signature_left">
         <p> Checked By</p>
-        <p><strong>  {{ user_name($item->checked_by)?user_name($item->checked_by)['name']:"" }}</strong></p>
-        <p>{{ user_name($item->checked_by)?user_name($item->checked_by)['designation']:"" }} </p>
+        <p><strong> {{$data->checked?$data->checked->designation:""}} </strong></p>
+        <p> {{$data->checked?$data->tested->name:""}} </p>
     </div>
 
    
   </div>
 
   
-        @if($index < $totalItems - 1)
-          <div class="page_break"></div>
-        @else
-           <div class="last-page"></div>
-         @endif
-
-  @endforeach
+       
   
 
 </body>

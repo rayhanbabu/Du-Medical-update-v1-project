@@ -73,6 +73,7 @@
       padding: 0;
     }
 
+
     .column ul li {
       margin-bottom: 6px;
       font-family: 'Tahoma', sans-serif;
@@ -122,9 +123,7 @@
     }
 
     /* New spacing around left and right column */
-   
-
- 
+    
        .header_table {
             width: 100%;
             border-collapse: collapse;
@@ -171,9 +170,7 @@
 
 
     <table class="header_table">
-
     <tbody>
-
       @if(empty($data->family_member_name))
           <tr>
              <td style="width: 40%;"> Appointment Id: <b>  {{ $data->id }} </b> </td>
@@ -228,22 +225,42 @@
           </tr>
 
           <tr>
-             <td> </td>
+             <td style="height:400px; border-right:1px solid black">  </td>
              <td>  </td>
              <td>  </td>
           </tr>
 
-          <tr>
-             <td> </td>
-             <td>  </td>
-             <td>  </td>
+          
+
+    </tbody>
+</table>
+
+<br><br><br><br>
+
+<table class="header_table">
+    <tbody>
+   
+       <tr>
+       
+             <th colspan="3" style="text-align:center"> <span style="font-size:16px;"> Shahid Buddhijibi Dr. Muhhammad Mortaza Medical Center </span> <br>
+             Appointment Id: <b> {{ $data->id }} </b>,  Date :<b> {{$data->date}} </b>, Registration/Employee Id : <b> {{ $data->registration }} </b> </th>
+           
+            
           </tr>
 
           <tr>
-             <td> </td>
-             <td>  </td>
-             <td>  </td>
+             <td colspan="3" style="text-align:center;"> <b>  Dispensary Report </b> </td>
+             
           </tr>
+
+
+          <tr>
+             <td   style="height:180px; width: 40%;">  </td>
+             <td style="width: 20%;">  </td>
+             <td style="width: 40%;">  </td>
+          </tr>
+
+          
 
     </tbody>
 </table>

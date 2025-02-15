@@ -56,6 +56,7 @@ class DiagnosticController extends Controller
                $result['diagnostic_name']=$arr['0']->diagnostic_name;
                $result['diagnostic_status']=$arr['0']->diagnostic_status;
                $result['reference_range']=$arr['0']->reference_range;
+               $result['default_value']=$arr['0']->default_value;
           } else {
               $result['id']='';
               $result['diagnostic_name']='';
@@ -63,6 +64,7 @@ class DiagnosticController extends Controller
               $result['test_id']='';
               $result['character_id']='';
               $result['reference_range']='';
+              $result['default_value']='';
           }
 
             return view('admin.diagnostic_manage',$result);  
@@ -97,6 +99,7 @@ class DiagnosticController extends Controller
          $model->character_id=$request->input('character_id');
          $model->diagnostic_status=$request->input('diagnostic_status');
          $model->reference_range=$request->input('reference_range');
+         $model->default_value=$request->input('default_value');
          $model->save();
 
          return redirect('/admin/diagnostic/'.$model->test_id)->with('success', 'Changes saved successfully.');

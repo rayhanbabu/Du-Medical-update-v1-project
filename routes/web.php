@@ -53,6 +53,10 @@ use App\Http\Controllers\WebCustomize\StaffdutyController;
        //      return view('welcome');
        //   });
 
+          Route::get('/prescripsion_update', function () {
+            return view('patientreportprint.prescription_update');
+         });
+
        Route::get('/', [HomeController::class,'index']);
        Route::get('/service', [HomeController::class,'service']);
        Route::get('/member_information/{member}', [HomeController::class,'doctor']);
@@ -75,7 +79,7 @@ use App\Http\Controllers\WebCustomize\StaffdutyController;
 
           //patient Report Print
           Route::get('/prescription/{appointment_id}', [PatientReportController::class,'prescription_show']);
-          Route::get('/diagnostic/report/{appointment_id}', [PatientReportController::class,'diagnostic_report']);
+          Route::get('/diagnostic/report/{appointment_id}/{testcategory_id}', [PatientReportController::class,'diagnostic_report']);
      });
  
       //admin route
@@ -244,11 +248,15 @@ use App\Http\Controllers\WebCustomize\StaffdutyController;
        Route::middleware('NursingMiddleware')->group(function(){
              //Nursing Panel
              Route::get('/nursing/nursing_list',[NursingpanelController::class,'nursing_list']);
-             Route::get('/nursing/nursing_report/{appointment_id}',[NursingpanelController::class,'nursing_report']);
+             Route::get('/nursing/setup',[NursingpanelController::class,'nursing_setup']);
+             Route::post('/nursing/search',[NursingpanelController::class,'nursing_search']);
+           
              Route::post('/nursing/insert',[NursingpanelController::class,'nursing_insert']);
              Route::get('/nursing/nursing_service/{appointment_id}',[NursingpanelController::class,'nursing_service']);
              Route::delete('/nursing/delete',[NursingpanelController::class,'nursing_delete']);
              Route::get('/nursing/status/{type}/{appintment_id}',[NursingpanelController::class,'nursing_status']);
+
+             Route::get('/nursing/nursing_report/{appointment_id}',[NursingpanelController::class,'nursing_report']);
        
             });  
 
@@ -259,20 +267,25 @@ use App\Http\Controllers\WebCustomize\StaffdutyController;
         }); 
 
 
-       Route::middleware('DiagnosticMiddleware')->group(function(){
-            //Diagnostic Panel
-            Route::get('/diagnostic/test_list',[DiagnosticpanelController::class,'test_list']);
-            Route::get('/diagnostic/setup',[DiagnosticpanelController::class,'diagnostic_setup']);
-            Route::get('/diagnostic/test_report/{testprovide_id}',[DiagnosticpanelController::class,'test_report']);
-            Route::post('/diagnostic/test_report/update',[DiagnosticpanelController::class,'test_report_update']);
-            Route::get('/diagnostic/appointment_test',[DiagnosticpanelController::class,'appointment_test']);
+        Route::middleware('DiagnosticMiddleware')->group(function(){
+             //Diagnostic Panel
+             Route::get('/diagnostic/test_list',[DiagnosticpanelController::class,'test_list']);
+             Route::get('/diagnostic/setup',[DiagnosticpanelController::class,'diagnostic_setup']);
+             Route::post('/diagnostic/search',[DiagnosticpanelController::class,'diagnostic_search']);
+             Route::post('/diagnostic/setup/update',[DiagnosticpanelController::class,'diagnostic_setup_update']);
+             Route::get('/diagnostic/intest/delete/{test_id}',[DiagnosticpanelController::class,'intest_delete']);
 
-        }); 
+             Route::get('/diagnostic/test_report/{appointment_id}/{testcategory_id}',[DiagnosticpanelController::class,'test_report']);
+             Route::post('/diagnostic/test_report/update',[DiagnosticpanelController::class,'test_report_update']);            
+         }); 
 
 
        Route::middleware('WardMiddleware')->group(function(){
             //Ward Panel
            Route::get('/ward/ward_list',[WardpanelController::class,'ward_list']);
+           Route::get('/ward/setup',[WardpanelController::class,'ward_setup']);
+           Route::post('/ward/search',[WardpanelController::class,'ward_search']);
+
            Route::get('/ward/ward_report/{appointment_id}',[WardpanelController::class,'ward_report']);
            Route::post('/ward/insert',[WardpanelController::class,'ward_insert']);
            Route::get('/ward/edit/{id}',[WardpanelController::class,'ward_edit']);

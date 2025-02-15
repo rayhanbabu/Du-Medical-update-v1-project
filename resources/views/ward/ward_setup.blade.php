@@ -1,79 +1,80 @@
 @extends('layouts/dashboardheader')
-@section('page_title','Diagnostic Dashboard')
-@section('test_manage','active')
+@section('page_title','Admin Dashboard')
+@section('ward_list','active')
 @section('content')
  
-  <div class="card mt-2 mb-2 shadow-sm">
+ <div class="card mt-2 mb-2 shadow-sm">
    <div class="card-header">
       <div class="row">
-        <div class="col-8">
-            <h4> Isolation  Ward  </h4> 
+        <div class="col-4">
+            <h4> Isolation Ward Service </h4> 
        </div>
-       <div class="col-2">
-          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-       
-
-         </div>
+     
+   
+       <div class="col-4">
+       <form method="POST" id="search_form" enctype="multipart/form-data">
+          <div class="d-grid gap-2 d-md-flex ">
+      
+             <input type="text" name="search_name" class="form-control form-control-sm" required placeholder="Search By Appointment Id " >
+             <button type="submit" id="search_button"  class="btn btn-success btn-sm "> Search </button>
+           
+          </div>
+        </form>
       </div>
+     
+     
 
-
-      <div class="col-2">
-        <div class="d-grid gap-2 d-md-flex ">
-                 <a class="btn btn-info btn-sm" href="{{url('ward/ward_list')}}" role="button"> Back </a>
+      <div class="col-4">
+      <div class="d-grid gap-2 d-md-flex justify-content-center">
+          
+            <a class="btn btn-primary btn-sm" href="{{url('/ward/ward_list')}}" role="button"> Back </a>
+          
         </div>
       </div>
+
+
+     <div class="text-center">
+        <p class="text-danger error_search"> </p>
+    </div>
+      
+
     </div>
 
 
     @if(Session::has('fail'))
-            <div class="alert alert-danger"> {{Session::get('fail')}}</div>
+    <div class="alert alert-danger"> {{Session::get('fail')}}</div>
     @endif
 
     @if(Session::has('success'))
-           <div class="alert alert-success"> {{Session::get('success')}}</div>
+    <div class="alert alert-success"> {{Session::get('success')}}</div>
     @endif
 
 
   </div>
 
-  
+  @if($appointment_id)
+
      <div class="card-body">
-      
-      <div class="row g-1">
-         <div class="col-md-5 mt-2 p-1">
-           <div class="shadow p-2">
-                 <b> Patient Information </b>
+   
+    <div class="row g-1">
+       
+       <div class="col-md-4 mt-2 p-1">
+         <div class="shadow p-2">
+              <b> Patient Information </b>
               <hr>
               <div class="row">
                     <div class="col-md-8">
-                          @if($appointment->family_member_name)
-                            Name:<b>{{$appointment->member_name}}</b><br>
-                            Care of & Patient :<b>{{$appointment->family_member_name}}</b><br>
-                           @else
-                             Patient Name:<b>{{$appointment->member_name}}</b><br>
-                           @endif
-                         Appointment Id: <b> {{$appointment->id}} </b><br>
-                         Reg / Employee Id: <b> {{$appointment->registration}} </b><br>  
-                         Referred By : <b>{{$appointment->name}} </b><br>  
-                         Service : <b>{{$appointment->indoor_service}} </b><br>  
-                         Comment : <b>{{$appointment->indoor_comment}} </b><br>  
+                        @if($appointment->careof)
+                            Member Name : <b> {{$appointment->member->member_name}} </b> <br>
+                            Careof & Patient : <b> {{$appointment->careof->family_member_name}} </b> <br>
+                        @else
+                          Patient Name : <b> {{$appointment->member->member_name}} </b> <br>
+                        @endif
+                        Appointment Id: <b>  {{$appointment->id}}</b> <br>
+                        Appintment Date: <b> {{$appointment->date}} </b><br>
                      </div>
 
-                     <div class="col-md-4">
-                          Age:<b>  {{$appointment->age}}  </b> <br>
-                          Gender:<b>  {{$appointment->gender}}  </b> <br>
-                
-                     @if($appointment->indoor_status==1)
-                       <a href="{{ url('ward/status/active/'.$appointment->id) }}" 
-                        onclick="return confirm('Are you sure you want to change this status?')" 
-                        class="btn btn-success btn-sm">Completed</a>
-                     @else
-                       <a href="{{ url('ward/status/inactive/'.$appointment->id) }}" 
-                        onclick="return confirm('Are you sure you want to change this status?')" 
-                        class="btn btn-danger btn-sm">Pending</a>
-                     @endif
-                   
-                     </div>
+                    
               </div>
 
               <br>
@@ -81,9 +82,14 @@
       </div>
 
 
-     <!-- Nursing Start -->
-   <div class="col-md-7 mt-2 p-1">
-         <div class="shadow p-2">
+   
+
+  
+
+  <!-- Test In Start -->
+ <div class="col-md-8 mt-2 p-1">
+     
+ <div class="shadow p-2">
                <div class="d-grid gap-2 d-md-flex justify-content-md-end">    
                          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add</button>      
                 </div>
@@ -91,7 +97,7 @@
 
     
           
-    <div class="row">
+            <div class="row">
      <div class="col-md-12">
 
      <div class="table-responsive">
@@ -123,17 +129,19 @@
        <!-- Nursing END -->
 
     </div>
-    
 
-   </div>
+     </div>
 
-   <script src="{{ asset('js/ward_setup.js') }}"></script>
+  </div>
 
+ <!-- Test In END -->
+          
+    </div>
+<script type="text/javascript">
 
-    <script type="text/javascript">
+      fetchAll();
 
-           fetchAll();
-    function fetchAll() {
+      function fetchAll() {
         // Destroy existing DataTable if it exists
         if ($.fn.DataTable.isDataTable('.data-table')) {
             $('.data-table').DataTable().destroy();
@@ -164,9 +172,8 @@
     }
 
 
-            
-       </script>
-
+       
+  </script>
 
 
 {{-- add new Student modal start --}}
@@ -307,6 +314,16 @@
   </div>
 </div>
 {{-- edit employee modal end --}}
+
+
+
+    @endif
+ 
+
+
+</div>
+
+<script src="{{ asset('js/ward_setup.js') }}"></script>
 
 
 

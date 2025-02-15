@@ -15,14 +15,13 @@ class WardpanelController extends Controller
 {
 
     public function ward_list(Request $request){
+
        if($request->ajax()){
-            $data = Appointment::leftJoin('members', 'members.id', '=', 'appointments.member_id')
-           ->leftJoin('users', 'users.id', '=', 'appointments.user_id')
-           ->leftJoin('families','families.id','=','appointments.careof_id')
-           ->whereIn('appointments.nursing_status', ["0","1"])
-           ->select('families.family_member_name','users.name', 'members.member_name', 'members.registration', 'appointments.*')
-           ->latest()
-           ->get();
+
+             $data = Ward::with('member')->with('appointment')->with('user')->with('careof')
+             ->select('appointment_id',DB::raw("MAX(member_id) as member_id")
+             ,DB::raw("MAX(user_id) as user_id") ,DB::raw("MAX(user_id) as user_id"))
+              ->groupBy('wards.appointment_id')->latest()->get();
 
                return Datatables::of($data)
                  ->addIndexColumn()
@@ -33,29 +32,49 @@ class WardpanelController extends Controller
                    return $statusBtn;
                })
                ->addColumn('edit', function($row){
-                 $btn = '<a href="/ward/ward_report/'.$row->id.'" class="edit btn btn-primary btn-sm">Edit</a>';
+                 $btn = '<a href="/ward/setup?appointment_id='.$row->appointment_id.'" class="edit btn btn-primary btn-sm">Edit/View</a>';
                  return $btn;
-                })
-               
-               ->rawColumns(['status','edit'])
-               ->make(true);
+                })->rawColumns(['status','edit'])->make(true);
        }
           return view('ward.ward');  
        }
 
 
-        public function ward_report(Request $request,$appointment_id)
-        {
+       public function ward_setup(Request $request){
 
-           $appointment = Appointment::leftJoin('members','members.id','=','appointments.member_id')
-             ->leftJoin('users','users.id','=','appointments.user_id')
-             ->leftJoin('families','families.id','=','appointments.careof_id')
-             ->where('appointments.id',$appointment_id)
-             ->select('families.family_member_name','users.name', 'members.gender', 'members.member_name' , 'members.registration', 'appointments.*')
-             ->first();
-             
-            return view('ward.ward_report',['appointment'=>$appointment]);  
-         }
+        $appointment_id = $request->query('appointment_id','');
+        if($appointment_id) {
+          $appointment=Appointment::with('member')->with('careof')->where('appointments.id',$appointment_id)->first();
+       }else{
+          $appointment=null;
+       }
+
+       return view('ward.ward_setup',['appointment'=>$appointment,'appointment_id'=>$appointment_id]); 
+      }
+
+
+
+      public function ward_search(Request $request) { 
+         
+        $search_name = $request->search_name;
+        $appointment = Appointment::where('id',$search_name)->first();
+       
+      if (!$appointment) {
+          return response()->json([
+              'status' => 'fail',
+              'message' => "Invalid Information",
+          ],200);
+      } else {
+          return response()->json([
+             'status' => 'success',
+             'message' => "Vail Information",
+             'appointment_id' =>$appointment->id,
+          ],200);
+     
+      }    
+      
+  }
+
 
 
          public function ward_insert(Request $request){
@@ -198,7 +217,6 @@ class WardpanelController extends Controller
                       $status=0;
                    }
 
-                  DB::update("update appointments set indoor_status ='$status' where id = '$appointment_id'" );  
                   return back()->with('success','Status update Successfull');  
        
              }

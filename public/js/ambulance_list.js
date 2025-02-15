@@ -19,20 +19,18 @@ $(document).ready(function(){
                 }
             },
             columns: [
+                {data: 'appointment_id', name: 'appointment_id'},
                 {data: 'date', name: 'date'},
-                {data: 'member_name', name: 'member_name'},
-                {data: 'registration', name: 'registration'},
-                {data: 'phone', name: 'phone'},
+                {data: 'member.member_name', name: 'member.member_name'},
+                {data: 'member.phone', name: 'member.phone'},
                 {data: 'to_address', name: 'to_address'},
-                {data: 'ref_teacher', name: 'ref_teacher'},
-                {data: 'disease', name: 'disease'},
-                {data: 'distance', name: 'distance'},
-                {data: 'name', name: 'name'},
-                {data: 'driver_phone', name: 'driver_phone'},
+                {data: 'driver.name', name: 'driver.name'},
+                {data: 'doctor.name', name: 'doctor.name'},
                 {data: 'status', name: 'status'},
                 { data: 'edit', name: 'edit', orderable: false, searchable: false },
                 { data: 'delete', name: 'delete', orderable: false, searchable: false },
                 {data: 'created_at', name: 'created_at'},
+                {data: 'completed_at', name: 'completed_at'},
             ]
         });
     }
@@ -62,7 +60,13 @@ $(document).ready(function(){
             $.each(response.message, function(key, err_values) {
               $('#add_form_errlist').append('<li>' + err_values + '</li>');
             });
-          } else {
+          } if (response.status == 401) {
+            $('#add_form_errlist').html("");
+            $('#add_form_errlist').removeClass('d-none');
+            $('#add_form_errlist').append('<li>' + response.message + '</li>');
+
+          }
+          else {
             //console.log(response.message);
             $('#add_form_errlist').html("");
             $('#add_form_errlist').addClass('d-none');
@@ -98,8 +102,10 @@ $(document).ready(function(){
           } else {
             $('#edit_id').val(response.value.id);
             $('#edit_driver_id').val(response.value.driver_id);
+            $('#edit_doctor_id').val(response.value.doctor_id);
             $('#edit_to_address').val(response.value.to_address);
             $('#edit_disease').val(response.value.disease);
+            $('#edit_status').val(response.value.status);
             $('#edit_distance').val(response.value.distance);
            
           }

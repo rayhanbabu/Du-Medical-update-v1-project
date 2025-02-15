@@ -5,7 +5,7 @@
 
 <div class="card mt-2 mb-2 shadow-sm">
   <div class="card-header">
-  <div class="row ">
+     <div class="row">
                <div class="col-8"> <h5 class="mt-0"> Nursing Panel </h5></div>
                      <div class="col-2">
                          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -17,7 +17,7 @@
                     
                      <div class="col-2">
                          <div class="d-grid gap-2 d-md-flex ">
-                                                  
+                         <a class="btn btn-primary btn-sm" href="{{url('nursing/setup')}}" role="button"> Add </a>                 
                          </div>
                      </div> 
          </div>
@@ -43,12 +43,10 @@
                      <tr>
                          <td> Appointment ID  </td>
                          <td> Date  </td>
-                         <td> Name  </td>
+                         <td> Name   </td>
                          <td> Care of  </td>
-                         <td> Registration  </td>
-                         <td> Seruvice Name  </td>
-                         <td> Status  </td>
-                         <td> Edit  </td>
+                         <td> Phone Number  </td>                    
+                         <td> Edit/View  </td>
                       </tr>
                    </thead>
                    <tbody>
@@ -80,18 +78,15 @@
            }
        },
        order: [
-            [6, 'asc'],   
             [0, 'desc']   
         ],
        columns: [
-            {data: 'id', name: 'id'},
-            {data: 'date', name: 'date'},
-            {data: 'member_name', name: 'member_name'},
-            {data: 'family_member_name', name: 'family_member_name'},
-            {data: 'registration', name: 'registration'},
-            {data: 'nursing_service', name: 'nursing_service'},
-            {data: 'status', name: 'status'},
-            {data: 'edit', name: 'edit', orderable: false, searchable: false},
+            {data: 'appointment_id', name: 'appointment_id'},
+            {data: 'appointment.date', name: 'appointment.date'},
+            {data: 'member.member_name', name: 'member.member_name'},
+            {data: 'member.member_name', name: 'member.member_name'},
+            {data: 'member.phone', name: 'member.phone'},
+            {data: 'edit', name: 'edit', orderable: false, searchable: false}
           
        ]
    });

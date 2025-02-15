@@ -1,26 +1,43 @@
 @extends('layouts/dashboardheader')
 @section('page_title','Admin Dashboard')
-@section('appointment_list','active')
+@section('test_list','active')
 @section('content')
  
  <div class="card mt-2 mb-2 shadow-sm">
    <div class="card-header">
       <div class="row">
-        <div class="col-8">
-            <h4> Appointment Setup </h4> 
+        <div class="col-4">
+            <h4> Daignostic Add </h4> 
        </div>
-       <div class="col-2">
-          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <a class="btn btn-primary btn-sm" href="{{url('diagnostic/setup')}}" role="button"> Add </a>
-         </div>
+     
+   
+       <div class="col-4">
+       <form method="POST" id="search_form" enctype="multipart/form-data">
+          <div class="d-grid gap-2 d-md-flex ">
+      
+             <input type="text" name="search_name" class="form-control form-control-sm" required placeholder="Search By Appointment Id " >
+             <button type="submit" id="search_button"  class="btn btn-success btn-sm "> Search </button>
+           
+          </div>
+        </form>
       </div>
+     
+     
 
-
-      <div class="col-2">
-        <div class="d-grid gap-2 d-md-flex ">
-            <a class="btn btn-primary btn-sm" href="{{url('/doctor/appointment_list')}}" role="button"> Back </a>
+      <div class="col-4">
+      <div class="d-grid gap-2 d-md-flex justify-content-center">
+          
+            <a class="btn btn-primary btn-sm" href="{{url('/diagnostic/test_list')}}" role="button"> Back </a>
+          
         </div>
       </div>
+
+
+     <div class="text-center">
+        <p class="text-danger error_search"> </p>
+    </div>
+      
+
     </div>
 
 
@@ -34,7 +51,9 @@
 
 
   </div>
-  <form method="POST" id="edit_appointment_setup_form" enctype="multipart/form-data">
+
+  @if($appointment_id)
+  <form method="POST" id="diagnostic_setup_form" enctype="multipart/form-data">
      <div class="card-body">
    
     <div class="row g-1">
@@ -45,18 +64,17 @@
               <hr>
               <div class="row">
                     <div class="col-md-8">
-                   
-                       
-                       Appointment Id:<b> </b> <br>
-                       Reg/ Employee Id: <b>  </b><br>
-                       Problem Description:<b>  </b>
+                        @if($appointment->careof)
+                            Member Name : <b> {{$appointment->member->member_name}} </b> <br>
+                            Careof & Patient : <b> {{$appointment->careof->family_member_name}} </b> <br>
+                        @else
+                          Patient Name : <b> {{$appointment->member->member_name}} </b> <br>
+                        @endif
+                        Appointment Id: <b>  {{$appointment->id}}</b> <br>
+                        Appintment Date: <b> {{$appointment->date}} </b><br>
                      </div>
 
-                     <div class="col-md-4">
-                         Age:<b>  Year</b> <br>
-                         Gender:<b>  </b> <br>
-                         Attached File:<b> </b>
-                     </div>
+                    
               </div>
 
               <br>
@@ -64,74 +82,16 @@
       </div>
 
 
-     <!-- Nursing Start -->
-      <div class="col-md-2 mt-2 p-1">
-         <div class="shadow p-2">
-              <b> Nursing </b>
-              <hr>
-              <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group p-1">
-                     <label class="control-label"> Service </label>
-                     <select name="nursing_service" id="nursing_service" class="form-control js-example-disabled-results" style="max-width:300px;" >
-                        <option value="">Select One</option>
-                     
-                   </select>
-                       </div>
+   
 
-                      <div class="form-group p-2">
-                            <label class=""> Comment(If Any) </label> 
-                            <input type="text" id="nursing_comment" value="{{$appointment->nursing_comment}}" name="nursing_comment" class="form-control form-control-sm">
-                      </div> 
-
-                    </div> 
-              </div>
-          </div>
-      </div>
-       <!-- Nursing END -->
-
-     <!-- Isolation Start -->
-      <div class="col-md-2 mt-2 p-1">
-         <div class="shadow p-2">
-              <b> Isolation </b>
-              <hr>
-              <div class="row">
-                    <div class="col-md-12">
-                     
-
-                    </div> 
-              </div>
-          </div>
-      </div>
-       <!-- Isolation  END -->
-
-
-          <!-- Isolation Start -->
-      <div class="col-md-3 mt-2 p-1">
-         <div class="shadow p-2">
-              <b> Advise </b>
-              <hr>
-              <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                      
-                         </div>
-                    </div> 
-              </div>
-          </div>
-      </div>
-       <!-- Isolation  END -->
-
-     
-
-
+  
 
   <!-- Test In Start -->
- <div class="col-md-3 mt-2 p-1">
+ <div class="col-md-5 mt-2 p-1">
       <div class="shadow p-3">
-          <b> Test in Medical </b>
+          <b> Test Selcet </b>
        <hr>
-
+       <input type="hidden" name="appointment_id" value="{{$appointment->id}}" class="form-control" >
      <div id="intest_attr_box" >
                  @php
                       $tiloop_count_num=1;
@@ -167,7 +127,7 @@
                 <i class="fa fa-plus"></i> </button>  
            @else
                     <a class="btn btn-danger" 
-                      onclick="return confirm('Are you sure you want to Delete this Item')" href="{{url('doctor/intest/delete/')}}/{{$intestArr['id']}}" role="button"><i class="fa fa-minus"></i></a>                                     
+                      onclick="return confirm('Are you sure you want to Delete this Item')" href="{{url('diagnostic/intest/delete/')}}/{{$intestArr['id']}}" role="button"><i class="fa fa-minus"></i></a>                                     
            @endif  
         </div>
 
@@ -191,18 +151,20 @@
           </div>
 
          <div class="mt-4">
-             <button type="submit" id="edit_appointment_btn" class="btn btn-success">Update </button>
+             <button type="submit" id="diagonostic_btn" class="btn btn-success"> Save & Update </button>
           </div>
             
     </div>
   
     </form>
+
+    @endif
  
 
 
 </div>
 
-<script src="{{ asset('js/appointment_setup.js') }}"></script>
+<script src="{{ asset('js/diagnostic_setup.js') }}"></script>
 <script type="text/javascript">
   
     $(".js-example-disabled-results").select2();

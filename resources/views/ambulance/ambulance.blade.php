@@ -31,6 +31,11 @@
     <div class="row">
 
     <div class="col-sm-2">
+        <label> Appointment Id</label>
+        <input name="appointment_id" id="appointment_id" type="text" class="form-control form-control-sm" placeholder="" required />
+      </div>
+
+    <div class="col-sm-2">
         <label>Driver name</label><br>
         <select name="driver_id" id="driver_id" class="js-example-disabled-results" style="width:200px;" required>
           <option value="">Select Product</option>
@@ -41,35 +46,21 @@
       </div>
      
       <div class="col-sm-2">
-        <label>Member name</label><br>
-        <select name="member_id" id="member_id" class="js-example-disabled-results" style="width:200px;" required>
-          <option value="">Select Product</option>
-           @foreach($member as $row)
-                <option value="{{ $row->id}}">{{ $row->member_name}}</option>
-            @endforeach
-        </select>
-      </div>
-
-      <div class="col-sm-2">
-        <label>Reference Teacher </label><br>
-        <select name="ref_teacher" id="ref_teacher" class="js-example-disabled-results" style="width:200px;" required>
-          <option value="">Select Product</option>
-           @foreach($member as $row)
-                <option value="{{ $row->id}}">{{ $row->member_name}}</option>
+        <label> Doctor Name </label><br>
+        <select name="doctor_id" id="doctor_id" class="js-example-disabled-results" style="width:200px;" required>
+          <option value="">Select Doctor </option>
+           @foreach($doctor as $row)
+                <option value="{{ $row->id}}">{{ $row->name}}</option>
             @endforeach
         </select>
       </div>
 
 
-      <div class="col-sm-3">
+      <div class="col-sm-4">
         <label>To Address</label>
         <input name="to_address" id="to_address" type="text" class="form-control form-control-sm" placeholder="" required />
       </div>
 
-      <div class="col-sm-3">
-        <label> Disease</label>
-        <input name="disease" id="disease" type="text" class="form-control form-control-sm" placeholder="" required />
-      </div>
 
    
 
@@ -78,6 +69,8 @@
         <input type="submit" value="Submit" id="add_btn" class=" btn btn-success btn-sm" />
       </div>
     </div>
+
+    <br>
     <ul class="alert alert-warning d-none" id="add_form_errlist"></ul>
   </form>
   <br>
@@ -96,20 +89,18 @@
                 <table class="table  table-bordered data-table">
                    <thead>
                      <tr>
+                         <td> Appointment Id  </td>
                          <td> Date  </td>
                          <td> Name  </td>
-                         <td> Registration  </td>
                          <td> Phone </td>
-                         <td> To Address </td>
-                         <td> Reference Teacher </td>
-                         <td> Disease </td>
-                         <td> Distance </td>
+                         <td> Address </td>
                          <td> Driver  </td>
-                         <td> Driver Phone </td>
+                         <td> Doctor  </td>
                          <td> Status  </td>
                          <td> Edit  </td>
                          <td> Delete  </td>
-                         <td> Created at  </td>
+                         <td> Started at  </td>
+                         <td> Completed at  </td>
                        
                       </tr>
                    </thead>
@@ -152,31 +143,31 @@
             </div>
 
             <div class="col-lg-6 ">
+                  <label class=""> Doctor Name <span style="color:red;"> * </span> </label>
+                     <select class="form-select" name="doctor_id" id="edit_doctor_id" aria-label="Default select example">
+                        <option value="">Select One</option>
+                        @foreach($doctor as $row)
+                             <option value="{{ $row->id}}">{{ $row->name}}</option>
+                         @endforeach
+                    </select>
+            </div>
+
+            <div class="col-lg-6 ">
                 <label for="roll">To Address <span style="color:red;"> * </span></label>
                 <input type="text" name="to_address" id="edit_to_address" class="form-control" placeholder="" required>
                 <p class="text-danger error_designation"></p>
             </div>
 
   
-            <div class="col-lg-6 ">
-                 <label class=""> Distance(Km/H) <span style="color:red;"> * </span></label>
-                 <input type="text" name="distance"  id="edit_distance" class="form-control form-control-sm"  pattern="^[0-9]*\.?[0-9]+$" required>
-            </div>
+        
 
-
-
-            <div class="col-lg-6 ">
-                <label for="roll"> Disease </label>
-                <input type="text" name="disease" id="edit_disease" class="form-control" placeholder="" >
-                <p class="text-danger error_disease"></p>
-            </div>
 
             <div class="col-lg-6 ">
                   <label class=""> Ambulance Status  <span style="color:red;"> * </span> </label>
-                     <select class="form-select" name="status" id="edit_member_status" aria-label="Default select example">
+                     <select class="form-select" name="status" id="edit_status" aria-label="Default select example">
                         <option value="1">Completed</option>
                         <option value="5">Canceled</option>
-                        <option value="0">Pending</option>
+                        <option value="0">On Going</option>
                     </select>
             </div>
 

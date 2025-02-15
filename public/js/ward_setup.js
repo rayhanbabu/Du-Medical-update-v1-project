@@ -2,6 +2,39 @@ $(document).ready(function(){
 
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} });
 
+
+    //  Appointment Search
+    $("#search_form").submit(function(e) {
+        e.preventDefault();
+ 
+     const fd = new FormData(this);
+        $.ajax({
+           type: 'POST',
+           url: '/ward/search',
+           data: fd,
+           cache: false,
+           contentType: false,
+           processData: false,
+           dataType: 'json',
+           beforeSend: function() {
+               $("#search_button").prop('disabled', true).text('Processing...');
+           },
+          success: function(response) {
+           $("#search_button").prop('disabled', false).text('Search');
+   
+           if (response.status == 'success') {
+             $('.error_search').text('');
+              window.location.href = "/ward/setup?appointment_id=" + response.appointment_id;
+           }else if((response.status == 'fail')){
+               $('.error_search').text(response.message);
+       
+            } 
+           }
+        });
+     });
+     // End Appointment Search
+ 
+ 
     
         // add new employee ajax request
         $("#add_employee_form").submit(function(e) {

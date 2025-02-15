@@ -17,7 +17,7 @@
                     
                      <div class="col-2">
                          <div class="d-grid gap-2 d-md-flex ">
-                       
+                         <a class="btn btn-primary btn-sm" href="{{url('ward/setup')}}" role="button"> Add </a>    
                          </div>
                      </div> 
          </div>
@@ -45,8 +45,6 @@
                          <td> Name  </td>
                          <td> Care of  </td>
                          <td> Registration  </td>
-                  
-                         <td> Status  </td>
                          <td> Edit  </td>
                       </tr>
                    </thead>
@@ -79,13 +77,11 @@
        },
        order: [[0, 'desc']],
        columns: [
-            {data: 'id', name: 'id'},
-            {data: 'date', name: 'date'},
-            {data: 'member_name', name: 'member_name'},
-            {data: 'family_member_name', name: 'family_member_name'},
-            {data: 'registration', name: 'registration'},
-          
-            {data: 'status', name: 'status'},
+            {data: 'appointment_id', name: 'appointment_id'},
+            {data: 'appointment.date', name: 'appointment.date'},
+            {data: 'member.member_name', name: 'member.member_name'},
+            {data: 'member.member_name', name: 'member.member_name'},
+            {data: 'member.phone', name: 'member.phone'},
             {data: 'edit', name: 'edit', orderable: false, searchable: false},
           
        ]

@@ -9,6 +9,7 @@ use App\Models\Nursing;
 use App\Models\Testreport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class NursingpanelController extends Controller
 {
@@ -16,13 +17,10 @@ class NursingpanelController extends Controller
     public function nursing_list(Request $request){
        if($request->ajax()){
 
-            $data = Appointment::leftJoin('members','members.id','=','appointments.member_id')
-            ->leftJoin('users', 'users.id', '=', 'appointments.user_id')
-             ->leftJoin('families','families.id','=','appointments.careof_id')
-            ->whereIn('appointments.nursing_status',['0','1'])
-            ->select('families.family_member_name','users.name', 'members.member_name', 'members.registration', 'appointments.*')
-            ->latest()
-            ->get();
+            $data = Nursing::with('member')->with('appointment')->with('user')->with('careof')
+             ->select('appointment_id',DB::raw("MAX(member_id) as member_id")
+             ,DB::raw("MAX(user_id) as user_id") ,DB::raw("MAX(user_id) as user_id"))
+             ->groupBy('nursings.appointment_id')->latest()->get();
 
 
             return Datatables::of($data)
@@ -34,14 +32,52 @@ class NursingpanelController extends Controller
                    return $statusBtn;
                })
                ->addColumn('edit', function($row){
-                 $btn = '<a href="/nursing/nursing_report/'.$row->id.'" class="edit btn btn-primary btn-sm">Edit</a>';
+                 $btn = '<a href="/nursing/setup?appointment_id='.$row->appointment_id.'" class="edit btn btn-primary btn-sm">Edit/View</a>';
                  return $btn;
                 })
+                
                ->rawColumns(['status','edit'])
                ->make(true);
        }
           return view('nursing.nursing');  
        }
+
+
+       public function nursing_setup(Request $request){
+
+            $appointment_id = $request->query('appointment_id','');
+        
+       
+          if($appointment_id) {
+            $appointment=Appointment::with('member')->with('careof')->where('appointments.id',$appointment_id)->first();
+           }else{
+            $appointment=null;
+           }
+
+           return view('nursing.nursing_setup',['appointment'=>$appointment,'appointment_id'=>$appointment_id]); 
+     }
+
+       public function nursing_search(Request $request) { 
+         
+        $search_name = $request->search_name;
+        $appointment = Appointment::where('id',$search_name)->first();
+       
+      if (!$appointment) {
+          return response()->json([
+              'status' => 'fail',
+              'message' => "Invalid Information",
+          ],200);
+      } else {
+          return response()->json([
+             'status' => 'success',
+             'message' => "Vail Information",
+             'appointment_id' =>$appointment->id,
+          ],200);
+     
+      }    
+      
+  }
+
 
 
        public function nursing_report(Request $request,$appointment_id){
@@ -99,15 +135,19 @@ class NursingpanelController extends Controller
 
       public function nursing_service(Request $request,$appointment_id){
          if ($request->ajax()) {
-              $data = Nursing::leftJoin('users','users.id','=','nursings.user_id')
-              ->where('appointment_id',$appointment_id)
-              ->select('users.name','nursings.*')->latest()->get();
+              $data = Nursing::with('user')->where('appointment_id',$appointment_id)->latest()->get();
               return Datatables::of($data)
                ->addIndexColumn()
                ->addColumn('delete', function($row){
                   $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a>';
                   return $btn;
-               })->rawColumns(['delete'])
+               })
+               ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)
+                    ->timezone('Asia/Dhaka')
+                    ->format('Y-m-d H:i:s'); // Adjust format as needed
+               })
+               ->rawColumns(['delete'])
                ->make(true);
            }
           return view('nursing.nursing_report');  
