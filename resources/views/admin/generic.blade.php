@@ -40,8 +40,9 @@
                 <table class="table  table-bordered data-table">
                    <thead>
                      <tr>
-                         <td> Serial </td>
-                         <td> Generic Name </td>
+                         <td> ID </td>
+                         <td> Generic/Product(Form) </td>
+                         <td> Warning Product Unit </td>
                          <td> Generic Status</td>
                          <td> Edit </td>
                          <td> Delete </td>
@@ -74,9 +75,11 @@
                console.log(xhr.responseText);
            }
        },
+       order: [[0, 'desc']],
        columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+            {data: 'id', name: 'id'},
             {data: 'generic_name', name: 'generic_name'},
+            {data: 'warning_value', name: 'warning_value'},
             {data: 'status', name: 'status'},
             {data: 'edit', name: 'edit', orderable: false, searchable: false},
             {data: 'delete', name: 'delete', orderable: false, searchable: false},

@@ -6,7 +6,7 @@
 <div class="card mt-2 mb-2 shadow-sm">
    <div class="card-header">
        <div class="row ">
-               <div class="col-8"> <h5 class="mt-0"> Stock @if(!$id) Add @else Edit @endif </h5></div>
+               <div class="col-8"> <h5 class="mt-0">Product Store @if(!$id) Add @else Edit @endif </h5></div>
                      <div class="col-2">
                          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                              
@@ -53,7 +53,7 @@
 
 
        <div class="form-group col-sm-3 my-2">
-               <label class=""><b> Generic/ Product category <span style="color:red;"> * </span></b></label><br>
+               <label class=""><b> Generic/ Product category <span style="color:red;"> * </span></b> </label> <br>
                  <select name="generic_id" id="generic_id"  class="form-control js-example-disabled-results" style="max-width:300px;" required>
                   <option value="">Select Generic Name </option>
                    @foreach($generic as $row)
@@ -79,15 +79,6 @@
            </div> 
 
 
-           <div class="form-group col-sm-2  my-2">
-                <label class=""><b> Form  </b></label>
-                 <select class="form-select form-select-sm" name="form"  aria-label="Default select example">
-                       <option value="Tablet" {{ $form == 'Tablet' ? 'selected' : '' }}> Tablet </option>
-                       <option value="Capsul" {{ $form == 'Capsul' ? 'selected' : '' }}> Capsul </option>
-                       <option value="Suspention" {{ $form == 'Suspention' ? 'selected' : '' }}> Suspention </option>
-                       <option value="Ointment" {{ $form == 'Ointment' ? 'selected' : '' }}> Ointment </option>
-                </select>
-           </div> 
 
           <div class="form-group col-sm-3 my-2">
                <label class=""><b>Medicine Name <span style="color:red;"> * </span></b></label>
@@ -96,7 +87,7 @@
 
           <div class="form-group col-sm-2 my-2">
                <label class=""><b> Strength </b></label>
-               <input type="text" name="strength" class="form-control form-control-sm" value="{{$strength}}" required>
+               <input type="text" name="strength" class="form-control form-control-sm" value="{{$strength}}" >
           </div> 
 
           <div class="form-group col-sm-2 my-2">
@@ -116,8 +107,8 @@
           </div> 
 
            <div class="form-group col-sm-2 my-2">
-                <label class=""><b> Expired Date </b></label>
-                <input type="date" name="expired_date" class="form-control form-control-sm" value="{{$expired_date}}"  >
+                <label class=""><b> Expired Date <span style="color:red;"> * </span></b></label>
+                <input type="date" name="expired_date" class="form-control form-control-sm" value="{{$expired_date}}"  required>
            </div> 
 
            <div class="form-group col-sm-2 my-2">

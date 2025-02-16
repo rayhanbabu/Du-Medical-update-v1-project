@@ -37,6 +37,7 @@ use App\Http\Controllers\WebCustomize\PageCategoryController;
 use App\Http\Controllers\Admin\CharacterController;
 use App\Http\Controllers\WebCustomize\NoticeController;
 use App\Http\Controllers\WebCustomize\StaffdutyController;
+use App\Http\Controllers\Admin\FormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +114,13 @@ use App\Http\Controllers\WebCustomize\StaffdutyController;
             Route::post('/admin/brand/insert', [BrandController::class,'brand_insert']);
             Route::get('/admin/brand/delete/{id}', [BrandController::class,'brand_delete']); 
 
+               //form 
+           Route::get('/admin/form', [FormController::class,'form']);
+           Route::get('/admin/form/manage', [FormController::class,'form_manage']);
+           Route::get('/admin/form/manage/{id}', [FormController::class,'form_manage']);
+           Route::post('/admin/form/insert', [FormController::class,'form_insert']);
+           Route::get('/admin/form/delete/{id}', [FormController::class,'form_delete']);
+
            //medicine 
            Route::get('/admin/medicine',[MedicineController::class,'medicine']);
            Route::get('/admin/medicine/manage',[MedicineController::class,'medicine_manage']);
@@ -127,6 +135,7 @@ use App\Http\Controllers\WebCustomize\StaffdutyController;
            Route::get('/admin/stock/manage/{id}', [StockController::class,'stock_manage']);
            Route::post('/admin/stock/insert', [StockController::class,'stock_insert']);
            Route::get('/admin/stock/delete/{id}', [StockController::class,'stock_delete']);
+           Route::get('/admin/stock_available', [StockController::class,'stock_available']);
         
            //week 
            Route::get('/admin/week', [WeekController::class,'week']);

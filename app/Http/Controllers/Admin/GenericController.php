@@ -8,12 +8,13 @@ use Yajra\DataTables\DataTables;
 use App\Models\Generic;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GenericController extends Controller
 {
     public function generic(Request $request){
         if ($request->ajax()) {
-             $data = Generic::latest()->get();
+            $data=Generic::where('generic_status',1)->latest()->get();
              return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
@@ -38,15 +39,18 @@ class GenericController extends Controller
 
 
       public function generic_manage(Request $request, $id=''){
+     
            if($id>0){
                $arr=Generic::where(['id'=>$id])->get();
                $result['id']=$arr['0']->id;
                $result['generic_name']=$arr['0']->generic_name;
                $result['generic_status']=$arr['0']->generic_status;
+               $result['warning_value']=$arr['0']->warning_value;
           } else {
               $result['id']='';
               $result['generic_name']='';
               $result['generic_status']='';
+              $result['warning_value']='';
           }
 
             return view('admin.generic_manage',$result);  
@@ -59,11 +63,14 @@ class GenericController extends Controller
               $request->validate([
                  'generic_name' => 'required|unique:generics,generic_name',
                  'generic_status' => 'required',
+                 'warning_value' => 'required|integer',
                ]);
           }else{
               $request->validate([
                  'generic_name' => 'required|unique:generics,generic_name,'.$request->post('id'),
                  'generic_status' => 'required',
+                 'warning_value' => 'required|integer',
+ 
               ]);
           }
 
@@ -71,15 +78,24 @@ class GenericController extends Controller
       if($request->post('id')>0){
           $model=Generic::find($request->post('id'));
           $model->updated_by=$user->id;
+          $model->generic_name=$request->input('generic_name');
+          $model->generic_status=$request->input('generic_status');
+          $model->warning_value=$request->input('warning_value');
+          $model->save();
+
+          return redirect('/admin/generic')->with('success', 'Changes saved successfully.');
+
       }else{
+
            $model= new Generic; 
            $model->created_by=$user->id;
-       }
-         $model->generic_name=$request->input('generic_name');
-         $model->generic_status=$request->input('generic_status');
-         $model->save();
+           $model->generic_name=$request->input('generic_name');
+           $model->generic_status=$request->input('generic_status');
+           $model->warning_value=$request->input('warning_value');
+           $model->save();
 
-         return redirect('/admin/generic')->with('success', 'Changes saved successfully.');
+              return redirect('/admin/generic')->with('success', 'Changes saved successfully.');
+       } 
 
       }
 

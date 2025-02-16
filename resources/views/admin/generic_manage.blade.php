@@ -51,13 +51,20 @@
 
      <div class="row px-2">
 
+
+
           <div class="form-group col-sm-6 my-2">
-               <label class=""><b>Generic Name <span style="color:red;"> * </span></b></label>
+               <label class=""><b>GenericCategory(Form)  <span style="color:red;"> * </span></b></label>
                <input type="text" name="generic_name" class="form-control" value="{{$generic_name}}" required>
           </div> 
 
+          <div class="form-group col-sm-3 my-2">
+               <label class=""><b> Warning Product Unit  <span style="color:red;"> * </span></b></label>
+               <input type="number" name="warning_value" class="form-control" value="{{$warning_value}}" required>
+          </div> 
+
             
-            <div class="form-group col-sm-6  my-2">
+            <div class="form-group col-sm-3  my-2">
                 <label class=""><b> Generic Status  </b></label>
                  <select class="form-select" name="generic_status"  aria-label="Default select example">
                       <option value="1" {{ $generic_status == '1' ? 'selected' : '' }}> Active </option>

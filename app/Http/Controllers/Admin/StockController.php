@@ -16,10 +16,8 @@ class StockController extends Controller
 {
     public function stock(Request $request){
        if($request->ajax()){
-             $data = Stock::leftjoin('users','users.id','=','stocks.user_id')
-             ->leftjoin('generics','generics.id','=','stocks.generic_id')
-             ->leftjoin('brands','brands.id','=','stocks.brand_id')
-             ->select('users.name','generics.generic_name','brands.brand_name','stocks.*')->latest()->get();
+          
+            $data=Stock::with('create')->with("generic")->with("brand")->latest()->orderBy('stocks.id','desc')->get();
              return Datatables::of($data)
                 ->addIndexColumn()
                ->addColumn('status', function($row){
@@ -93,17 +91,19 @@ class StockController extends Controller
     
           if(!$request->input('id')){
               $request->validate([
-                 'medicine_name' => 'required|unique:stocks,medicine_name',
+                 'medicine_name' => 'required',
                  'stock_status' => 'required',
                  'generic_id' => 'required',
                  'brand_id' => 'required',
                  'box' => 'required',
                  'piece_per_box' => 'required',
                  'cost_per_piece' => 'required',
+                 'expired_date' => 'required',
+
                ]);
           }else{
               $request->validate([
-                 'medicine_name' => 'required|unique:stocks,medicine_name,'.$request->post('id'),
+                 'medicine_name' => 'required',
                  'stock_status' => 'required',
                  'generic_id' => 'required',
                  'brand_id' => 'required',
@@ -111,6 +111,7 @@ class StockController extends Controller
                  'piece_per_box' => 'required',
                  'total_amount' => 'required',
                  'cost_per_piece' => 'required',
+                 'expired_date' => 'required',
                 
 
               ]);
@@ -166,5 +167,27 @@ class StockController extends Controller
          return back()->with('success', 'Data deleted successfully.');
 
        }
+
+
+       public function stock_available(Request $request){
+        if($request->ajax()){
+           
+             $data=Stock::with("generic")->groupBy('generic_id')
+             ->select('generic_id',DB::raw("SUM(available_piece) as available_piece"),
+             DB::raw("SUM(available_piece) as available_piece"))->latest()->get();
+              return Datatables::of($data)
+                 ->addIndexColumn()
+                ->addColumn('status', function($row){
+                   $statusBtn = $row->available_piece > $row->generic->warning_value ? 
+                       '' : 
+                       '<button class="btn btn-danger btn-sm">Warning</button>';
+                    return $statusBtn;
+                 })
+                ->rawColumns(['status'])
+                ->make(true);
+            }
+         return view('admin.stock_available');  
+       }
+ 
 
 }

@@ -69,7 +69,6 @@
 
 
 
-
 <script>
        $(function() {
    var table = $('.data-table').DataTable({

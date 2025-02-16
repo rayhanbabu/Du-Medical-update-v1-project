@@ -17,9 +17,7 @@ class DiagnosticpanelController extends Controller
      public function test_list(Request $request){
 
         $auth=Auth::user();
-        $valuesArray = explode(',',$auth->tests_id);
-
-    
+        $valuesArray = explode(',',$auth->tests_id);   
         if ($request->ajax()) {
             
             $data = Testprovide::with('member')->with('testcategory')->with('user')->with('checked')->with('tested')->with('careof')->groupBy('testprovides.testcategory_id')
@@ -28,7 +26,6 @@ class DiagnosticpanelController extends Controller
             ,DB::raw("MAX(user_id) as user_id") ,DB::raw("MAX(checked_by) as checked_by"),DB::raw("MAX(tested_by) as tested_by")
             ,DB::raw("MAX(tested_status) as tested_status"),DB::raw("MAX(checked_status) as checked_status"))->orderBy('testprovides.appointment_id','desc')->get();
   
-       
         return Datatables::of($data)
               ->addIndexColumn()       
               ->addColumn('tested_status', function($row) {
