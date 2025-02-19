@@ -186,7 +186,7 @@ class PatientReportController extends Controller
   
         public function prescription_show(Request $request){ 
 
-             try {
+            try {
                     $appointment_id=$request->appointment_id;
                     $data = Appointment::leftJoin('members','members.id','=','appointments.member_id')
                       ->leftJoin('users','users.id','=','appointments.user_id')
@@ -196,26 +196,13 @@ class PatientReportController extends Controller
                       ->select('families.family_member_name','families.relation_type','chambers.chamber_name','users.name','users.designation as user_designation'
                       ,'members.member_name','members.registration','appointments.*')->first();
                    
-            if(empty($data)){
+              if(empty($data)){
                      return "Invalid Prescription Id";
-             }else{
-                    $medicine_provide = Medicineprovide::leftjoin('generics','generics.id','=','medicineprovides.generic_id')
-                     ->leftjoin('stocks','stocks.id','=','medicineprovides.stock_id')
-                     ->where('appointment_id',$appointment_id)
-                     ->select('generics.generic_name','stocks.medicine_name','medicineprovides.*')->get();
-     
-              $medicine_out = Medicineoutside::where('appointment_id',$appointment_id)->get();
-     
-              $testprovide = Testprovide::leftjoin('tests','tests.id','=','testprovides.test_id')
-                 ->where('appointment_id',$appointment_id)->select('tests.test_name','testprovides.*')->get();
-     
-              $test_out = Testoutside::where('appointment_id',$appointment_id)->get();     
-     
+              }else{
+                   
               $file=$data->member_name.'-'.$appointment_id.'-test report.pdf';
 
-              $pdf = PDF::setPaper('a4','portrait')->loadView('patientreportprint.prescription', 
-                    ['data'=>$data,'medicine_provide'=>$medicine_provide,'medicine_out'=>$medicine_out,
-                     'testprovide'=>$testprovide,'test_out'=>$test_out]);
+              $pdf = PDF::setPaper('a4','portrait')->loadView('patientreportprint.prescription',['data'=>$data]);
                                //return $pdf->download($file); portrait landscape 
                    return  $pdf->stream($file, array('Attachment' => false));
 

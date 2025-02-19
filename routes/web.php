@@ -55,9 +55,7 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
        //      return view('welcome');
        //   });
 
-          Route::get('/prescripsion_update', function () {
-            return view('patientreportprint.prescription_update');
-         });
+      
 
        Route::get('/', [HomeController::class,'index']);
        Route::get('/service', [HomeController::class,'service']);
