@@ -38,6 +38,7 @@ use App\Http\Controllers\Admin\CharacterController;
 use App\Http\Controllers\WebCustomize\NoticeController;
 use App\Http\Controllers\WebCustomize\StaffdutyController;
 use App\Http\Controllers\Admin\FormController;
+use App\Http\Controllers\ProductRequest\ProductRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -273,6 +274,12 @@ use App\Http\Controllers\Admin\FormController;
            //Pharmacy Panel
            Route::get('/pharmacy/medicine_list',[PharmacypanelController::class,'medicine_list']);
            Route::delete('/pharmacy/medicine_status',[PharmacypanelController::class,'medicine_status']);
+
+           Route::get('/admin/product_request',[ProductRequestController::class,'product_request']);
+           Route::get('/admin/product_request/setup',[ProductRequestController::class,'product_request_setup']);
+           Route::post('/productrequest/setup/update',[ProductRequestController::class,'product_request_setup_update']);
+
+
         }); 
 
 

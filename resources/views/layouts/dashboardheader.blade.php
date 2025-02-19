@@ -186,6 +186,11 @@
                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                  Pharmacy Panel 
             </a>
+
+            <a class="nav-link @yield('product_request') " href="{{url('/admin/product_request')}}">
+               <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                 Product Request
+            </a>
          @endif
 
          @if(nursing_access())
