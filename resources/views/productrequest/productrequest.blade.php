@@ -67,6 +67,71 @@
 
 
 
+
+{{-- edit employee modal start --}}
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Product Details </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" id="edit_employee_form" enctype="multipart/form-data">
+      
+        <div class="modal-body p-4 bg-light">
+          <div class="row">
+          
+            <div class="col-lg-6">
+                 <label for="roll"> Product Request Id </label>
+                 <input type="text" class="form-control" name="edit_id" id="edit_id" readonly>
+            </div>
+
+
+             <!-- Product Table -->
+            <div class="product_table">
+                  <table class="table table-bordered product_table">
+                      <thead>
+                       <tr>
+                           <th> Request From </th>
+                           <th> Generic/ Product category </th>
+                           <th> Product Name </th>
+                           <th> Qty </th>
+                      </tr>
+              </thead>
+                     <tbody>
+                <!-- Dynamic rows will be appended here -->
+                   </tbody>
+            </table>
+         </div>
+           
+
+          </div>
+
+
+
+          <div class="mt-2" id="avatar"> </div>
+
+          <div class="loader">
+            <img src="{{ asset('images/abc.gif') }}" alt="" style="width: 50px;height:50px;">
+          </div>
+
+          <div class="mt-4">
+            <button type="submit" id="edit_employee_btn" class="btn btn-success">Update </button>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{{-- edit employee modal end --}}
+
+
+<script src="{{ asset('js/productrequest_setup.js') }}"></script>
   <script>
           $(function() {
     var table = $('.data-table').DataTable({
@@ -85,7 +150,7 @@
             {data: 'id', name: 'id'},
             {data: 'date', name: 'date'},
             {data: 'request_from', name: 'request_from'},
-            {data: 'cmo_status', name: 'cmo_status'},
+            {data: 'view', name: 'view'},
             {data: 'cmo_status', name: 'cmo_status'},
             {data: 'cmo_status', name: 'cmo_status'},
             {data: 'cmo_status', name: 'cmo_status'},

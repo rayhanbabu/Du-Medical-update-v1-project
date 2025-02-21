@@ -47,11 +47,12 @@
                          <td> Box </td>
                          <td> Box per unit</td>
                          <td> Total Unit </td>
-                         <td> Cost per Unit </td>
+                         <td> Cost Per Unit </td>
                          <td> Total Cost </td>
                          <td> Stock Status </td>
                          <td> Edit </td>
                          <td> Delete </td>
+                         <td> Available Unit </td>
                          <td> Stock By </td>
                          <td> Expired Date </td>
                          <td> MGF Date </td>
@@ -70,6 +71,10 @@
 
   </div>
 </div>
+
+
+
+
 
 
 
@@ -99,6 +104,7 @@
             {data: 'status', name: 'status'},
             {data: 'edit', name: 'edit', orderable: false, searchable: false},
             {data: 'delete', name: 'delete', orderable: false, searchable: false},
+            {data: 'available_piece', name: 'available_piece'},
             {data: 'create.name', name: 'create.name'},
             {data: 'expired_date', name: 'expired_date'},
             {data:'mgf_date', name:'mgf_date'},

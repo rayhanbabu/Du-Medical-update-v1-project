@@ -103,24 +103,27 @@ class StockController extends Controller
                ]);
           }else{
               $request->validate([
-                 'medicine_name' => 'required',
-                 'stock_status' => 'required',
-                 'generic_id' => 'required',
-                 'brand_id' => 'required',
-                 'box' => 'required',
-                 'piece_per_box' => 'required',
-                 'total_amount' => 'required',
-                 'cost_per_piece' => 'required',
-                 'expired_date' => 'required',
-                
-
+                'medicine_name' => 'required',
+                'stock_status' => 'required',
+                'generic_id' => 'required',
+                'brand_id' => 'required',
+                'box' => 'required',
+                'piece_per_box' => 'required',
+                'cost_per_piece' => 'required',
+                'expired_date' => 'required',
               ]);
           }
 
         $user=Auth::user();
       if($request->post('id')>0){
-          $model=Stock::find($request->post('id'));
-          $model->updated_by=$user->id;
+          $data=Stock::find($request->post('id'));
+          if($data->available_piece==$data->total_piece){
+              $model=$data;
+              $model->updated_by=$user->id;
+           }else{
+              return back()->with('fail', 'Product can not be updated. Beacuse Available unit and Total unit does not match');
+           }
+         
       }else{
            $model= new Stock; 
            $model->created_by=$user->id;

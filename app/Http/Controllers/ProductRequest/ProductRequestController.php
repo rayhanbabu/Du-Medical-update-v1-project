@@ -8,6 +8,7 @@ use App\Models\Generic;
 use App\Models\Productrequest;
 use App\Models\User;
 use App\Models\Substore;
+use App\Models\Stock;
 use Illuminate\Support\Facades\validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,10 @@ class ProductRequestController extends Controller
 
                     return $statusBtn;
                 })
+                ->addColumn('view', function($row){
+                    $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="view btn btn-primary btn-sm">View</a>';
+                    return $btn;
+                })
                  ->addColumn('edit', function($row){
                     $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="edit btn btn-primary btn-sm">Edit</a>';
                     return $btn;
@@ -43,7 +48,7 @@ class ProductRequestController extends Controller
                      $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a>';
                      return $btn;
                  })               
-              ->rawColumns(['cmo_status','edit','delete'])
+              ->rawColumns(['cmo_status','edit','delete','view'])
               ->make(true);
            }
 
@@ -55,60 +60,108 @@ class ProductRequestController extends Controller
 
        public function product_request_setup(Request $request){
 
-            $result['generic'] = Generic::where('generic_status',1)->orderBy('generic_name','asc')->get();
+            $result['generic'] =Stock::with("generic")->groupBy('generic_id')
+            ->select('generic_id',DB::raw("SUM(available_piece) as available_piece"))->latest()->get();
              return view('productrequest.productrequest_setup',$result); 
        }
 
 
 
-       public function diagnostic_setup_update(Request $request){
+       public function product_request_setup_update(Request $request){
 
-        $appointment_id = $request->post('appointment_id');
-        $appointment=Appointment::with('member')->where('appointments.id',$appointment_id)->first();
+        DB::beginTransaction();
+        try {
+            $auth=Auth::user();
+            $user_type=$auth->userType;
+
             $date= date("Y-m-d");
             $year= date("Y");
             $month= date("m");
             $day= date("d");
-            $auth=Auth::user();
 
+            $model= new Productrequest; 
+            $model->request_by = $auth->id ;
+            $model->request_from = $user_type;
+            $model->date=$date;
+            $model->year=$year;
+            $model->month=$month;
+            $model->day=$day;
+            $model->save();
+ 
+            $avialble=Stock::where('generic_id',5)->get();
+             
             //medicine in Pharmacy
-            $inmedicineid = $request->post('inmedicineid');
             $generic_id = $request->post('generic_id');
-            $eating_time = $request->post('eating_time');
-            $eating_status = $request->post('eating_status');
             $total_piece = $request->post('total_piece');
 
-            foreach ($inmedicineid as $key => $val) {  
-              if ($generic_id[$key] && $total_piece[$key] ) {          
-                    $inmedicineattr['generic_id'] = $generic_id[$key];
-                    $inmedicineattr['total_piece'] = $total_piece[$key];
-                    $inmedicineattr['eating_time'] = $eating_time[$key];
-                    $inmedicineattr['eating_status'] = $eating_status[$key];
-                    $inmedicineattr['appointment_id'] = $appointment_id;
-                    $inmedicineattr['member_category'] = $member_category;
-                    $inmedicineattr['user_id'] = $auth->id;
-                    $inmedicineattr['member_id'] = $member_id;
-                    $inmedicineattr['date'] = $date;
-                    $inmedicineattr['month'] = $month;
-                    $inmedicineattr['year'] = $year;
-                    $inmedicineattr['day'] = $day;
-   
-                   if ($inmedicineid[$key] != '') {
-                        DB::table('medicineprovides')->where(['id' => $inmedicineid[$key]])->where('provide_status',0)->update($inmedicineattr);
-                    } else {
-                        DB::table('medicineprovides')->insert($inmedicineattr);
-                    }    
-                }
+        foreach ($generic_id as $key => $val) {  
+             // \Log::info("Generic Id : ".$generic_id[$key]);
+            if ($generic_id[$key]) {              
+                 $available=Stock::where('generic_id',$generic_id[$key])->where('available_piece','>',0)->orderBy('id',"ASC")->get();       
+                 if($available->sum('available_piece') >= $total_piece[$key]){
+                     foreach($available as $row){
+                         if($total_piece[$key]>0) {
+                             if($row->available_piece >= $total_piece[$key]){
+                                 $substore = new Substore;
+                                 $substore->request_from = $model->request_from;
+                                 $substore->productrequest_id  = $model->id;
+                                 $substore->generic_id  = $row->generic_id;
+                                 $substore->stock_id  = $row->id;
+                                 $substore->total_unit = $total_piece[$key];
+                                 $substore->available_unit = $total_piece[$key];
+                                 $substore->save();
+                                
+                                 $update_stock = Stock::where('id',$row->id)->update(['available_piece'=>$row->available_piece - $total_piece[$key]]);
+                                 $total_piece[$key]=0;
+                            }else{
+                                 $substore = new Substore;
+                                 $substore->request_from = $model->request_from;
+                                 $substore->productrequest_id  = $model->id;
+                                 $substore->generic_id  = $row->generic_id;
+                                 $substore->stock_id  = $row->id;
+                                 $substore->total_unit = $row->available_piece;
+                                 $substore->available_unit = $row->available_piece;
+                                 $substore->save();
+                                
+                                 $update_stock = Stock::where('id',$row->id)->update(['available_piece'=>0]);
+                                 $total_piece[$key] = $total_piece[$key] - $row->available_piece;
+                              }
+                           }
+                        }
+                   }
+                   
+                 }
           }
-     //Test in Medical  Ending   
-     return response()->json([
-          'status' => "success",
-          'message' => "Appointment Update Successfully",
-      ],200);
+
+          DB::commit();    
+          return response()->json([
+                'status' => "success",
+                'message' => "Appointment Update Successfully",
+           ],200);
+
+
+          } catch (\Exception $e) {
+              DB::rollback();
+              return response()->json([
+                  'status' => 'fail',
+                  'message' => 'Some error occurred. Please try again',
+              ],200);
+          }
 
        }
 
 
+
+       public function product_request_view(Request $request)
+       {
+              $id = $request->id;
+              $data = Substore::with('generic')->with('stock')->where('productrequest_id',$id)->get();
+              return response()->json([
+                'status' => 200,
+                'value' => $data,
+              ]);
+        }
+ 
 
 
 

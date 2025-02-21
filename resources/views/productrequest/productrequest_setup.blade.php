@@ -1,6 +1,6 @@
 @extends('layouts/dashboardheader')
 @section('page_title','Admin Dashboard')
-@section('test_list','active')
+@section('product_request','active')
 @section('content')
  
  <div class="card mt-2 mb-2 shadow-sm">
@@ -61,7 +61,7 @@
    <!-- Medicine In Start -->
    <div class="col-md-6 mt-2 p-1">
       <div class="shadow p-3">
-          <b> Medicine in Pharmacy </b>
+      
        <hr>
 
      <div class="" id="inmedicine_attr_box">
@@ -76,17 +76,16 @@
          
      <div class="row shadow p-2" id="inmedicine_attr_{{$loop_count_num++}}">              
          <div class="col-md-7 p-2">
-            <select name="generic_id[]" id="generic_id" class="form-control js-example-disabled-results me-3" >
-              <option value="">Select Medicine </option>
-                      @foreach($generic as $list)
-                           <option  value="{{$list->id}}" > 
-                                {{$list->generic_name}} </option>
-                       @endforeach
-                                              
-             </select>
+               <select name="generic_id[]" id="generic_id" class="form-control js-example-disabled-results me-3" >
+                          <option value=""> Select Product </option>
+                            @foreach($generic as $list)
+                               <option  value="{{$list->generic_id}}" > 
+                                 {{$list->generic->generic_name}}, Available({{ $list->available_piece }} Unit) </option>
+                             @endforeach                                            
+               </select>
         </div>
        <div class="col-md-3 p-2">
-            <input type="text" id="total_piece" name="total_piece[]" value="" placeholder="Quantity" class="form-control form-control-sm" >
+            <input type="text" id="total_piece" name="total_piece[]" value=""  placeholder="Quantity" class="form-control form-control-sm" >
        </div>
 
 
@@ -124,14 +123,12 @@
 
          <div class="mt-4">
              <button type="submit" id="productrequest_btn" class="btn btn-success"> Save  </button>
-          </div>
-            
+          </div>   
     </div>
   
     </form>
 
 
- 
 </div>
 
 <script src="{{ asset('js/productrequest_setup.js') }}"></script>

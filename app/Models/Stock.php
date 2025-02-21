@@ -9,6 +9,14 @@ class Stock extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'generic_id',
+        'available_piece',
+        'total_amount',
+        'id',
+    ];
+
+
     public function create(){
         return $this->belongsTo(User::class,'created_by'); 
     }

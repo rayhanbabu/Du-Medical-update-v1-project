@@ -263,7 +263,6 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
              Route::get('/nursing/nursing_service/{appointment_id}',[NursingpanelController::class,'nursing_service']);
              Route::delete('/nursing/delete',[NursingpanelController::class,'nursing_delete']);
              Route::get('/nursing/status/{type}/{appintment_id}',[NursingpanelController::class,'nursing_status']);
-
              Route::get('/nursing/nursing_report/{appointment_id}',[NursingpanelController::class,'nursing_report']);
        
             });  
@@ -276,6 +275,7 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
            Route::get('/admin/product_request',[ProductRequestController::class,'product_request']);
            Route::get('/admin/product_request/setup',[ProductRequestController::class,'product_request_setup']);
            Route::post('/productrequest/setup/update',[ProductRequestController::class,'product_request_setup_update']);
+           Route::get('/admin/product_request/view/{id}',[ProductRequestController::class,'product_request_view']);
 
 
         }); 
@@ -295,7 +295,7 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
 
 
        Route::middleware('WardMiddleware')->group(function(){
-            //Ward Panel
+           //Ward Panel
            Route::get('/ward/ward_list',[WardpanelController::class,'ward_list']);
            Route::get('/ward/setup',[WardpanelController::class,'ward_setup']);
            Route::post('/ward/search',[WardpanelController::class,'ward_search']);

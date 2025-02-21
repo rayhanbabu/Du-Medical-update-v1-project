@@ -2,8 +2,7 @@
 var loop_count=2;
 function add_more() {
 loop_count++;
-var html = '<div class="row shadow p-2" id="inmedicine_attr_' + loop_count + '">\
-         <input id="inmedicineid" name="inmedicineid[]" type="hidden">';
+var html = '<div class="row shadow p-2" id="inmedicine_attr_' + loop_count + '">';
 
 var generic_html = jQuery('#generic_id').html();   
 generic_html = generic_html.replace("selected", "");
@@ -38,6 +37,55 @@ html += '<div class="col-md-3 p-2">\
  $(document).ready(function(){ 
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} });
 
+
+
+
+
+    $(document).on('click', '.view', function(e) {
+      e.preventDefault();
+      var view_id = $(this).data('id'); 
+      $('#EditModal').modal('show');
+         // console.log(view_id);         
+      $.ajax({
+        type: 'GET',
+        url: '/admin/product_request/view/' + view_id,
+        success: function(response) {
+          //console.log(response);
+          if (response.status == 404) {
+            $('#success_message').html("");
+            $('#success_message').addClass('alert alert-danger');
+            $('#success_message').text(response.message);
+          } else {
+            $('#edit_id').val(view_id);
+
+               // Clear previous table content
+               $('.product_table tbody').empty();
+
+               // Check if response.data is not empty
+               if (response.value.length > 0) {
+                   $.each(response.value, function(index, product) {
+                       $('.product_table tbody').append(
+                           `<tr>
+                               <td>${product.request_from}</td>
+                                <td>${product.generic.generic_name}</td>
+                                 <td>${product.stock.medicine_name}</td>
+                                  <td>${product.total_unit}</td>
+                           </tr>`
+                       );
+                   });
+               } else {
+                   $('.product_table tbody').append(
+                       `<tr>
+                           <td colspan="1" class="text-center">No products found</td>
+                       </tr>`
+                   );
+               }
+           
+          }
+        }
+      });
+
+    });
 
 
     

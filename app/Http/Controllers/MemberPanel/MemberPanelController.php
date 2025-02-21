@@ -145,13 +145,11 @@ class MemberPanelController extends Controller
           }
 
 
+      public function appointment_update(Request $request) { 
 
-
-          public function appointment_update(Request $request) { 
-
-              $appointment_id = $request->appointment_id;
-              $disease_problem = $request->disease_problem;
-              $appointment = Appointment::find($appointment_id);
+                $appointment_id = $request->appointment_id;
+                $disease_problem = $request->disease_problem;
+                $appointment = Appointment::find($appointment_id);
           if(!$appointment_id ||  !$disease_problem ) {
                return response()->json([
                    'status' => 400,
