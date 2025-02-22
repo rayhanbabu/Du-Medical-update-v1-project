@@ -28,11 +28,11 @@ class GenericController extends Controller
                    return $btn;
                })
                ->addColumn('delete', function($row){
-                 $btn = '<a href="/admin/generic/delete/'.$row->id.'" onclick="return confirm(\'Are you sure you want to delete this item?\')" class="delete btn btn-danger btn-sm">Delete</a>';
-                 return $btn;
-             })
-               ->rawColumns(['status','edit','delete'])
-               ->make(true);
+                   $btn = '<a href="/admin/generic/delete/'.$row->id.'" onclick="return confirm(\'Are you sure you want to delete this item?\')" class="delete btn btn-danger btn-sm">Delete</a>';
+                   return $btn;
+                })
+                ->rawColumns(['status','edit','delete'])
+                ->make(true);
             }
           return view('admin.generic');  
       }

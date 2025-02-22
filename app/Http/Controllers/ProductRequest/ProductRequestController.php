@@ -18,39 +18,55 @@ class ProductRequestController extends Controller
 
      public function product_request(Request $request){
 
-      
-        if ($request->ajax()) {
-            $data = Productrequest::latest()->get();
+         if($request->ajax()) {
+               $data = Productrequest::with('provide')->with('request')->latest()->get();
                return Datatables::of($data)
-               ->addIndexColumn()
-               ->addColumn('cmo_status', function($row){
+                ->addIndexColumn()
+                  ->addColumn('cmo_status', function($row){
                        $statusBtn = '';
                        switch ($row->cmo_status) {
                            case '1':
-                               $statusBtn = '<button class="btn btn-success btn-sm">Verfied</button>';
-                               break;
+                              $statusBtn = '<a href="/admin/product_request/cmo_status/'.$row->id.'/0" onclick="return confirm(\'Are you sure you want to Change Status?\')" class="btn btn-success btn-sm"> Approved </a>';
+                                break;
                            default:
-                               $statusBtn = '<button class="btn btn-secondary btn-sm">Pending</button>';
+                              $statusBtn = '<a href="/admin/product_request/cmo_status/'.$row->id.'/1" onclick="return confirm(\'Are you sure you want to Change Status?\')" class="btn btn-danger btn-sm"> Pending </a>';
                                break;
                        }
-
                     return $statusBtn;
                 })
-                ->addColumn('view', function($row){
+                ->addColumn('provide_status', function($row){
+                    $statusBtn = '';
+                    switch ($row->provide_status) {
+                        case '1':
+                           $statusBtn = '<a href="/admin/product_request/provide_status/'.$row->id.'/0" onclick="return confirm(\'Are you sure you want to Change Status?\')" class="btn btn-success btn-sm"> Approved </a>';
+                             break;
+                        default:
+                           $statusBtn = '<a href="/admin/product_request/provide_status/'.$row->id.'/1" onclick="return confirm(\'Are you sure you want to Change Status?\')" class="btn btn-danger btn-sm"> Pending </a>';
+                            break;
+                    }
+                 return $statusBtn;
+                })
+                 ->addColumn('provide', function($row) {
+                     return $row->provide?$row->provide->name:"";
+                 })
+                 ->addColumn('request', function($row) {
+                    return $row->request?$row->request->name:"";
+                })
+                  ->addColumn('view', function($row){
                     $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="view btn btn-primary btn-sm">View</a>';
                     return $btn;
-                })
-                 ->addColumn('edit', function($row){
-                    $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="edit btn btn-primary btn-sm">Edit</a>';
-                    return $btn;
-                 })
+                  })
+                
                   ->addColumn('delete', function($row){
                      $btn = '<a href="javascript:void(0);" data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a>';
                      return $btn;
-                 })               
-              ->rawColumns(['cmo_status','edit','delete','view'])
-              ->make(true);
-           }
+                 })   
+                 ->addColumn('print', function($row) {
+                      return '<a href="/admin/product_request/print/'.$row->id.'"  class="btn btn-success btn-sm"> Print </a>';
+                })            
+               ->rawColumns(['cmo_status','provide_status','delete','view','provide','request','print'])
+               ->make(true);
+            }
 
           return view('productrequest.productrequest');  
        }
@@ -139,7 +155,6 @@ class ProductRequestController extends Controller
                 'message' => "Appointment Update Successfully",
            ],200);
 
-
           } catch (\Exception $e) {
               DB::rollback();
               return response()->json([
@@ -152,18 +167,112 @@ class ProductRequestController extends Controller
 
 
 
-       public function product_request_view(Request $request)
+       public function product_request_cmo_status(Request $request)
        {
-              $id = $request->id;
-              $data = Substore::with('generic')->with('stock')->where('productrequest_id',$id)->get();
-              return response()->json([
-                'status' => 200,
-                'value' => $data,
-              ]);
+          DB::beginTransaction();
+          try {
+                $id = $request->id;
+                $status = $request->status;
+
+                Productrequest::where('id',$id)->update(['cmo_status'=>$status]);
+                Substore::where('productrequest_id',$id)->update(['cmo_status'=>$status]);
+
+                DB::commit();
+                return back()->with('success', 'Changes saved successfully.');
+
+            } catch (\Exception $e) {
+                DB::rollback();
+                return back()->with('fail', 'Error occurred while saving changes.');
+            }
+  
         }
  
 
+        public function product_request_provide_status(Request $request)
+        {
+
+              DB::beginTransaction();
+              try {
+                 $auth=Auth::user();
+                 $id = $request->id;
+                 $status = $request->status;
+
+                 Productrequest::where('id',$id)->update(['provide_status'=>$status,'provide_by'=>$auth->id]);
+                 Substore::where('productrequest_id',$id)->update(['provide_status'=>$status]);
+ 
+                 DB::commit();
+                 return back()->with('success', 'Changes saved successfully.');
+ 
+             } catch (\Exception $e) {
+                  DB::rollback();
+                  return back()->with('fail', 'Error occurred while saving changes.');
+             }
+   
+         }
+  
 
 
+       public function product_request_view(Request $request){
+              $id = $request->id;
+              $data = Substore::with('generic')->with('stock')->where('productrequest_id',$id)->get();
+                 return response()->json([
+                    'status' => 200,
+                    'value' => $data,
+                 ]);
+        }
+
+
+
+        public function delete(Request $request) {
+
+            DB::beginTransaction();
+            try {
+            $model = Productrequest::find($request->input('id'));
+            if (!$model) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Product request not found',
+                ]);
+            }
+        
+            if ($model->cmo_status == 0 && $model->provide_status == 0) {
+                $substoreItems = Substore::where('productrequest_id', $request->input('id'))->get();
+        
+                foreach ($substoreItems as $row) {
+                    $stock = Stock::find($row->stock_id);
+                    if ($stock) {
+                        $stock->available_piece += $row->total_unit;
+                        $stock->save();
+                    }
+                }
+        
+                // Delete all related substore records
+                Substore::where('productrequest_id', $request->input('id'))->delete();
+                
+                // Delete the main model
+                $model->delete();
+                
+                DB::commit();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Data Deleted Successfully',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Product cannot be deleted',
+                ]);
+            }
+        
+
+        } catch (\Exception $e) {
+              DB::rollback();
+             return back()->with('fail', 'Error occurred while saving changes.');
+        }  
+
+      }
      
+
+
+
    }

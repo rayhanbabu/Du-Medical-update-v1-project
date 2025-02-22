@@ -130,39 +130,8 @@
 </div>
 {{-- edit employee modal end --}}
 
-
 <script src="{{ asset('js/productrequest_setup.js') }}"></script>
-  <script>
-          $(function() {
-    var table = $('.data-table').DataTable({
-         processing: true,
-         serverSide: true,
-       ajax: {
-            url: "{{ url('/admin/product_request') }}",
-            error: function(xhr, error, code) {
-               console.log(xhr.responsediagnostic);
-            }
-       },
-       order: [
-            [1, 'desc']   
-        ],
-       columns: [
-            {data: 'id', name: 'id'},
-            {data: 'date', name: 'date'},
-            {data: 'request_from', name: 'request_from'},
-            {data: 'view', name: 'view'},
-            {data: 'cmo_status', name: 'cmo_status'},
-            {data: 'cmo_status', name: 'cmo_status'},
-            {data: 'cmo_status', name: 'cmo_status'},
-            {data: 'delete', name: 'delete', orderable: false, searchable: false},
-            {data: 'request_by', name: 'request_by'},
-            {data: 'provide_by', name: 'provide_by'},
-          
-       ]
-   });
-});
-
-   </script>
+  
 
 
       

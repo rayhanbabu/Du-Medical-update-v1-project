@@ -157,7 +157,7 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
             Route::post('/admin/test/insert', [TestController::class,'test_insert']);
             Route::get('/admin/test/delete/{id}', [TestController::class,'test_delete']);
 
-             //diagnostic 
+            //diagnostic 
             Route::get('/admin/diagnostic/{test_id}', [DiagnosticController::class,'diagnostic']);
             Route::get('/admin/diagnostic/manage/{test_id}', [DiagnosticController::class,'diagnostic_manage']);
             Route::get('/admin/diagnostic/manage/{test_id}/{id}', [DiagnosticController::class,'diagnostic_manage']);
@@ -270,6 +270,10 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
        Route::middleware('PharmacyMiddleware')->group(function(){
            //Pharmacy Panel
            Route::get('/pharmacy/medicine_list',[PharmacypanelController::class,'medicine_list']);
+           Route::get('/pharmacy/setup',[PharmacypanelController::class,'pharmacy_setup']);
+           Route::post('/pharmacy/search',[PharmacypanelController::class,'pharmacy_search']);
+           Route::post('/pharmacy/setup/update',[PharmacypanelController::class,'pharmacy_setup_update']);
+
            Route::delete('/pharmacy/medicine_status',[PharmacypanelController::class,'medicine_status']);
 
            Route::get('/admin/product_request',[ProductRequestController::class,'product_request']);
@@ -277,6 +281,9 @@ use App\Http\Controllers\ProductRequest\ProductRequestController;
            Route::post('/productrequest/setup/update',[ProductRequestController::class,'product_request_setup_update']);
            Route::get('/admin/product_request/view/{id}',[ProductRequestController::class,'product_request_view']);
 
+           Route::get('/admin/product_request/cmo_status/{id}/{status}',[ProductRequestController::class,'product_request_cmo_status']);
+           Route::get('/admin/product_request/provide_status/{id}/{status}',[ProductRequestController::class,'product_request_provide_status']);
+           Route::delete('/admin/product_request/delete',[ProductRequestController::class,'delete']);
 
         }); 
 

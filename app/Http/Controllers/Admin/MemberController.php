@@ -197,7 +197,6 @@ class MemberController extends Controller
 
       public function delete(Request $request)
       {
-  
           $model = Member::find($request->input('id'));
           $filePath = public_path('uploads/admin') . '/' . $model->image;
           if (File::exists($filePath)) {
@@ -208,9 +207,8 @@ class MemberController extends Controller
               'status' => 200,
               'message' => 'Data Deleted Successfully',
           ]);
-  
           // }
-      }
+        }
   
      
 

@@ -38,6 +38,42 @@ html += '<div class="col-md-3 p-2">\
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} });
 
 
+    fetchAll();
+
+    function fetchAll() {
+      // Destroy existing DataTable if it exists
+      if ($.fn.DataTable.isDataTable('.data-table')) {
+          $('.data-table').DataTable().destroy();
+      }
+
+      // Initialize DataTable
+      var table = $('.data-table').DataTable({
+          processing: true,
+          serverSide: true,
+          ajax: {
+              url: "/admin/product_request",
+              error: function(xhr, error, code) {
+                  console.log(xhr.responseText);
+              }
+          },
+           order: [
+              [1, 'desc']   
+           ],
+          columns: [
+            {data: 'id', name: 'id'},
+            {data: 'date', name: 'date'},
+            {data: 'request_from', name: 'request_from'},
+            {data: 'view', name: 'view'},
+            {data: 'cmo_status', name: 'cmo_status'},
+            {data: 'provide_status', name: 'provide_status'},
+            {data: 'print', name: 'print'},
+            {data: 'delete', name: 'delete', orderable: false, searchable: false},
+            {data: 'request', name: 'request'},
+            {data: 'provide', name: 'provide'},
+          
+       ]
+      });
+  }
 
 
 
@@ -168,6 +204,41 @@ html += '<div class="col-md-3 p-2">\
         });
       
     });
+
+
+
+      // delete employee ajax request
+      $(document).on('click', '.delete', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id'); 
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You want to delete this item!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url:'/admin/product_request/delete',
+              method:'delete',
+              data: {
+                id: id,
+              },
+               success: function(response) {
+                  //console.log(response);
+                 if(response.status == 400){
+                    Swal.fire("Warning",response.message, "warning");
+                 }else if(response.status == 200)
+                    Swal.fire("Deleted",response.message, "success");
+                   fetchAll();
+              }
+            });
+          }
+        })
+      });
 
 
  });

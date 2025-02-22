@@ -17,7 +17,7 @@
                     
                    <div class="col-2">
                        <div class="d-grid gap-2 d-md-flex ">
-                              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add</button>  
+                              <a class="btn btn-primary btn-sm" href="{{url('pharmacy/setup')}}" role="button"> Add </a>
                        </div>
                      </div> 
          </div>
@@ -33,17 +33,14 @@
                 <table class="table  table-bordered data-table">
                    <thead>
                      <tr>
-                        <td> Appointment ID  </td>
-                         <td> Date  </td>
-                         <td> Name  </td>
-                         <td> Care of  </td>
-                         <td> Registration  </td>
-                         <td> Generic Name  </td>
-                         <td> Medicine Name  </td>
-                         <td>  Piece  </td>
-                         <td>  Price  </td>
-                         <td> Status  </td>
-                         <td> Status Change  </td>
+                          <td> Appointment ID  </td>
+                          <td> Date  </td>
+                          <td> Name  </td>
+                          <td> Care of  </td>
+                          <td> Registration  </td>
+                          <td> Medicine View  </td>
+                          <td> Delete  </td>
+                          <td> Created By  </td>
                       </tr>
                    </thead>
                    <tbody>
